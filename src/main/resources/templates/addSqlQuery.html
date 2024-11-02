@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <title>AddSqlTask</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-3">
+            <h5>Добавь время согласно формату, и промаркируй запрос тегами.</h5>
+        <code>
+            select <span class="mark">to_char(current_timestamp, 'YYYY-MM-DD HH24:MI:SS.MS')</span> time<span class="mark">_time</span>,<br>
+            'pg_stat_database_errors_sum' name<span class="mark">_tag</span>,<br>
+            sum(XACT_ROLLBACK) cnt<span class="mark">_field</span><br>
+            from pg_stat_database
+        </code>
+        </div>
+    </div>
+    <form method="post" th:action="@{/addSqlTask}" th:object="${form}" id="form">
+        <input type="hidden" class="form-control" th:field="*{id}">
+        <div class="row">
+        <div class="col-md-4">
+            <label for="interval" class="form-label">Interval</label><a th:href="@{/addInterval}">Add</a>
+            <select size="5" class="form-select" th:field="*{interval}" aria-label="Default select example" id="interval">
+                    <option th:each="interval : ${intervals}"
+                            th:text="${interval.name}"
+                            th:value="${interval.value}">
+                </select>
+            <label for="connectionId" class="form-label">DbConnection</label><a th:href="@{/addDbConnect}">Add</a>
+            <select th:field="*{connectionId}" size="5" class="form-select" aria-label="Default select example" id="connectionId">
+                <option th:each="db : ${dbs}"
+                        th:text="${db.name}"
+                        th:value="${db.id}">
+            </select>
+            <label for="influxConnectionId" class="form-label">InfluxConnection</label><a th:href="@{/addInflux}">Add</a>
+            <select th:field="*{influxConnectionId}" size ="5" class="form-select" aria-label="Default select example" id="influxConnectionId">
+                <option th:each="influx : ${influxes}"
+                        th:text="${influx.name}"
+                        th:value="${influx.id}">
+            </select>
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="influxDatabase" class="form-label">InfluxDb</label>
+                    <input th:field="*{influxDatabase}" type="text" class="form-control" id="influxDatabase">
+                </div>
+                <div class="col-md-6">
+                    <label for="influxMeasurement" class="form-label">InfluxMeasurement</label>
+                    <input th:field="*{influxMeasurement}" type="text" class="form-control" id="influxMeasurement"  list="influxdbs">
+                    <datalist id="influxdbs">
+                        <option th:each="influxdb : ${influxdbs}"
+                                th:text="${influxdb}"
+                                th:value="${influxdb}">
+                    </datalist>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="group-name" class="form-label">GroupName</label>
+                    <input th:field="*{groupName}" type="text" class="form-control" id="group-name" list="groups">
+                    <datalist id="groups">
+                        <option th:each="group : ${groups}"
+                                th:text="${group}"
+                                th:value="${group}">
+                    </datalist>
+                </div>
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Name</label>
+                    <input th:field="*{name}" type="text" class="form-control" id="name">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea th:field="*{description}" type="text" class="form-control" id="description" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="query" class="form-label">Query</label>
+                    <textarea th:field="*{query}" type="text" class="form-control" id="query" rows="10"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                   <div class="btn-group">
+                       <input type="submit" class="btn btn-sm btn-secondary" value="Save">
+
+                       <a class="btn btn-sm btn-secondary" type="button" th:if="${form.id}!=0" th:href="@{'/deleteSqlTask/'+${form.id}}">
+                           Delete
+                       </a>
+                       <a class="btn btn-sm btn-secondary" type="button" id="test">
+                           Test
+                       </a>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+    <div class="row">
+        <div class="col-md-12">
+            <label for="output" class="form-label">Output</label>
+            <div id="output"></div>
+        </div>
+    </div>
+    <div th:replace = "/fragments/scripts.html :: script_sql"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <title>AddTestType</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <div class="row">
+        <a class="btn btn-sm" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id} + '/queries/add'}">Add Query</a>
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${queries}">
+                <td th:text="${item.name}"></td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-sm" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id}}">Edit</a>
+                        <form th:action="@{'/projects/' + ${project.id} + '/charts/delete'}">
+                            <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <a class="btn btn-sm" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id} + '/alerts/add'}">Add Alert</a>
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${alerts}">
+                <td th:text="${item.name}"></td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-sm" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${item.id}}">Edit</a>
+                        <form th:action="@{'/projects/' + ${project.id} + '/charts/delete'}">
+                            <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
