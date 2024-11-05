@@ -4,12 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.riji.comparator.dto.ChartDto;
 import ru.riji.comparator.dto.TestDto;
+import ru.riji.comparator.models.ChartOrder;
 import ru.riji.comparator.models.ITestData;
 import ru.riji.comparator.services.ChartService;
 import ru.riji.comparator.services.TestService;
@@ -39,5 +37,10 @@ public class DataController {
     public ResponseEntity<?> getTestData(Model model, @RequestParam("testId") int testId){
         List<ITestData> data =  testService.getData(testId);
         return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+    @PostMapping(value = {"/api/update-chart-order"})
+    public ResponseEntity<?> updateChartOrder(Model model, @RequestBody ChartOrder[] arr){
+        chartService.updateChartOrder(arr);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 }

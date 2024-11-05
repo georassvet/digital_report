@@ -7,8 +7,8 @@
 <body>
 <div layout:fragment="content" class="container">
     <form method="post" th:action="@{'/projects/' + ${form.projectId} + '/charts/add'}" th:object="${form}">
-        <input type="hidden" class="form-control" th:field="*{id}">
-        <input type="hidden" class="form-control" th:field="*{projectId}">
+        <input type="hidden" class="form-control" th:field="*{id}" >
+        <input type="hidden" class="form-control" th:field="*{projectId}" th:attr="data-id=${form.projectId}">
         <div class="row">
             <div class="col-md-8">
                 <div class="row">
@@ -39,29 +39,14 @@
             </div>
         </div>
     </form>
+
     <div class="row">
-        <table class="table table-sm">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="item : ${items}">
-              <td><a th:text="${item.name}" class="btn btn-sm" th:href="@{'/projects/' + ${form.projectId} + '/charts/'+ ${item.id}}"></a></td>
-                <td>
-                    <div class="btn-group">
-                        <a class="btn btn-sm" th:href="@{'/projects/' + ${form.projectId} + '/charts/'+ ${item.id}} + '/edit'">Edit</a>
-                        <form th:method="post" th:action="@{'/admin/projects/' + ${form.projectId} + '/charts/delete'}">
-                            <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="col-md-6">
+            <button id="save-order" class="btn btn-sm btn-light border">Save order</button>
+            <div id="chart-items"></div>
+        </div>
     </div>
+    <div th:replace = "~{/fragments/scripts.html :: add_chart}"></div>
 </div>
 </body>
 </html>

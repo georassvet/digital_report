@@ -126,4 +126,19 @@ public class ChartDao implements IDao<Chart, ChartForm> {
             e.printStackTrace();
         }
     }
+
+    public void updateChartOrder(int chartId, int chartOrder) {
+        String sql= "update chart set chart_order=? where id =?";
+
+        try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
+            PreparedStatement statement = connection.prepareStatement(sql)
+        ){
+            statement.setInt(1, chartOrder);
+            statement.setInt(2, chartId);
+            statement.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }

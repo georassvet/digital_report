@@ -10,8 +10,13 @@
     <div class="row">
         <div class="col-md-12">
             <h1 id="projectId" th:attr="data-id=${project.id}" th:text="${project.name}"></h1>
-            <a class="btn btn-sm btn-light border" th:href="@{'/projects/' + ${project.id} + '/tests/add'}">Add Test</a>
             <a class="btn btn-sm btn-light border" th:href="@{'/projects/' + ${project.id} + '/charts/add'}">Add Chart</a>
+            <a class="btn btn-sm btn-light border" th:href="@{'/projects/' + ${project.id} + '/tests/add'}">Add Test</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="filters"></div>
         </div>
     </div>
     <div class="row">

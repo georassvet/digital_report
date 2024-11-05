@@ -41,6 +41,7 @@ function createTest(item){
 
    $(document).on("click",".test",function(e) {
     e.preventDefault();
+    $(this).addClass("active");
     var id = $(this).data("id");
    $.get('/api/data', { 'testId': id}, function(data){
 
