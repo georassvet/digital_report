@@ -55,7 +55,7 @@ public class ConnectDao implements IDao<Connect, ConnectForm> {
     }
 
     @Override
-    public void add(ConnectForm form) {
+    public int add(ConnectForm form) {
         String sql= "insert into connect(name, url, user, pass, token) values (?,?,?,?,?)";
 
         try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
@@ -71,11 +71,27 @@ public class ConnectDao implements IDao<Connect, ConnectForm> {
         }catch (SQLException e){
             e.printStackTrace();
         }
+        return 0;
     }
 
     @Override
-    public void update(ConnectForm connectForm) {
+    public void update(ConnectForm form) {
+        String sql= "update connect set name=?, url=?, user=?, pass=?, token=? where id=?";
 
+        try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
+            PreparedStatement statement = connection.prepareStatement(sql)
+        ){
+            statement.setString(1, form.getName());
+            statement.setString(2, form.getUrl());
+            statement.setString(3, form.getUser());
+            statement.setString(4, form.getPass());
+            statement.setString(5, form.getToken());
+            statement.setInt(6, form.getId());
+            statement.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -85,6 +101,16 @@ public class ConnectDao implements IDao<Connect, ConnectForm> {
 
     @Override
     public void delete(int id) {
+        String sql= "delete from connect where id=?";
 
+        try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
+            PreparedStatement statement = connection.prepareStatement(sql)
+        ){
+            statement.setInt(1, id);
+            statement.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 }

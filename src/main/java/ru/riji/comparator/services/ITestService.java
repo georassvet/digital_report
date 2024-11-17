@@ -4,12 +4,14 @@ import ru.riji.comparator.dto.ProjectDto;
 import ru.riji.comparator.dto.TestDto;
 import ru.riji.comparator.form.TestForm;
 import ru.riji.comparator.models.ITestData;
+import ru.riji.comparator.models.QueryData;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ITestService {
     void addTest(TestForm form);
-    List<ITestData> getData(int testId);
+   Map<Integer, List<QueryData>> getData(int testId);
     List<TestDto> getTestsByProjectId(int projectId);
     List<ProjectDto>getProjects();
 }

@@ -35,8 +35,7 @@ public class DataController {
 
     @GetMapping(value = {"/api/data"})
     public ResponseEntity<?> getTestData(Model model, @RequestParam("testId") int testId){
-        List<ITestData> data =  testService.getData(testId);
-        return new ResponseEntity<>(data, HttpStatus.OK);
+        return new ResponseEntity<>(testService.getData(testId), HttpStatus.OK);
     }
     @PostMapping(value = {"/api/update-chart-order"})
     public ResponseEntity<?> updateChartOrder(Model model, @RequestBody ChartOrder[] arr){

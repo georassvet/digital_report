@@ -25,5 +25,6 @@ public class ChartQueryForm implements IForm {
         this.name = item.getName();
         this.query = item.getQuery();
         this.type = item.getType();
+        this.connectId = item.getConnectId();
     }
 }

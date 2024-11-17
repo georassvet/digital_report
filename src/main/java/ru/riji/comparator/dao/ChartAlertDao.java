@@ -74,7 +74,7 @@ public class ChartAlertDao implements IDao<ChartAlert, ChartAlertForm>  {
 
 
     @Override
-    public void add(ChartAlertForm form) {
+    public int add(ChartAlertForm form) {
         String sql= "insert into chart_alert(chart_id, name, query) values (?,?,?)";
 
         try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
@@ -88,6 +88,7 @@ public class ChartAlertDao implements IDao<ChartAlert, ChartAlertForm>  {
         }catch (SQLException e){
             e.printStackTrace();
         }
+        return 0;
     }
 
     @Override

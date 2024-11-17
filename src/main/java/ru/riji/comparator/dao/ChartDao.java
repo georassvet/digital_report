@@ -69,11 +69,13 @@ public class ChartDao implements IDao<Chart, ChartForm> {
     }
 
     @Override
-    public void add(ChartForm form) {
+    public int add(ChartForm form) {
         String sql= "insert into chart(project_id, name, title, scaleX, scaleY) values (?,?,?,?,?)";
 
         try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
-            PreparedStatement statement = connection.prepareStatement(sql)
+            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statementRowId = connection.prepareStatement("SELECT last_insert_rowid()")
+
         ){
             statement.setInt(1, form.getProjectId());
             statement.setString(2, form.getName());
@@ -81,15 +83,18 @@ public class ChartDao implements IDao<Chart, ChartForm> {
             statement.setString(4, form.getScaleX());
             statement.setString(5, form.getScaleY());
             int count = statement.executeUpdate();
+            return statementRowId.executeQuery().getInt(1);
 
         }catch (SQLException e){
             e.printStackTrace();
         }
+
+        return 0;
     }
 
     @Override
     public void update(ChartForm form) {
-        String sql= "update chart set project_id=? name=?, title=?, scaleX=?, scaleY=? where id =?";
+        String sql= "update chart set project_id=?, name=?, title=?, scaleX=?, scaleY=? where id =?";
 
         try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
             PreparedStatement statement = connection.prepareStatement(sql)

@@ -13,6 +13,7 @@ import ru.riji.comparator.models.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,14 +58,43 @@ public class TestService implements ITestService{
                     testDataDao.add(data);
                 }
             }
-
         }
-
     }
 
     @Override
-    public List<ITestData> getData(int testId) {
-        return null;
+    public Map<Integer,  List<QueryData>> getData(int testId) {
+        List<TestData> testData = testDataDao.getByTestId(testId);
+        Map<Integer, List<TestData>> groupesByChartId = testData.stream().collect(Collectors.groupingBy(TestData::getChartId));
+
+        Map<Integer, List<QueryData>>  map = new HashMap<>();
+
+        for(Map.Entry<Integer, List<TestData>> groupByChartId : groupesByChartId.entrySet()){
+            Map<Integer, List<TestData>> groupsByQueryId = groupByChartId.getValue().stream().collect(Collectors.groupingBy(TestData::getQueryId));
+
+             List<QueryData> list = new ArrayList<>();
+
+            for(Map.Entry<Integer, List<TestData>> groupByQueryId : groupsByQueryId.entrySet()){
+                Map<String, List<TestData>> groupsByName = groupByQueryId.getValue().stream().collect(Collectors.groupingBy(x->x.getName()));
+
+
+                for(Map.Entry<String, List<TestData>> groupByName : groupsByName.entrySet()){
+                    QueryData queryData = new QueryData();
+                    queryData.setTestId(testId);
+                    queryData.setChartId(groupByChartId.getKey());
+                    queryData.setQueryId(groupByQueryId.getKey());
+                    queryData.setMetricName(groupByName.getKey());
+                    queryData.setLabels(groupByName.getValue().stream().map(TestData::getLabel).collect(Collectors.toList()));
+                    queryData.setValues(groupByName.getValue().stream().map(TestData::getValue).collect(Collectors.toList()));
+
+                    list.add(queryData);
+                }
+
+            }
+            map.put(groupByChartId.getKey(), list);
+
+        }
+
+        return map;
     }
 
     @Override

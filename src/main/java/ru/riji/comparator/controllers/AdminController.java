@@ -81,6 +81,11 @@ public class AdminController {
        testTypeDao.delete(id);
         return "redirect:/admin/test-type/add";
     }
+    @GetMapping("/admin/settings")
+    private String settings(Model model){
+
+        return "settings";
+    }
 
     @GetMapping("/admin/connects/add")
     private String addConnect(Model model){
@@ -95,6 +100,19 @@ public class AdminController {
         } else {
             connectDao.update(form);
         }
+        return "redirect:/admin/connects/add";
+    }
+
+    @GetMapping("/admin/connects/{id}")
+    private String editConnect(Model model, @PathVariable("id") int id){
+        model.addAttribute("form", new ConnectForm(connectDao.getById(id)));
+        model.addAttribute("items", connectDao.getAll());
+        return "addConnect";
+    }
+
+    @PostMapping("/admin/connects/delete")
+    private String addConnect(Model model, int id){
+        connectDao.delete(id);
         return "redirect:/admin/connects/add";
     }
 

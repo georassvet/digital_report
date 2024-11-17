@@ -7,7 +7,7 @@ import java.util.List;
 public interface IDao<T, F extends IForm> {
     List<T> getAll();
     T getById(int id);
-    void add(F f);
+    int add(F f);
     void update(F f);
     void update(T t);
     void delete(int id);

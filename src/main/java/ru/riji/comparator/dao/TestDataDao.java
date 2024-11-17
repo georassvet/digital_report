@@ -68,15 +68,12 @@ public class TestDataDao {
             e.printStackTrace();
         }
     }
-    public Test getById(int id) {
-        return null;
-    }
-    public List<Test> getAllByProjectId(int projectId) {
-        List<Test> items = new ArrayList<>();
+    public List<TestData> getByTestId(int testId) {
+        List<TestData> items = new ArrayList<>();
         try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
-            PreparedStatement statement = connection.prepareStatement(TestMapper.getByProjectId)
+            PreparedStatement statement = connection.prepareStatement(TestDataMapper.getByTestId)
         ){
-            statement.setInt(1, projectId);
+            statement.setInt(1, testId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()){
                 items.add(mapper.map(rs));
@@ -86,4 +83,5 @@ public class TestDataDao {
         }
         return items;
     }
+
 }

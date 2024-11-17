@@ -55,7 +55,7 @@ public class ProjectDao implements IDao<Project, ProjectForm> {
     }
 
     @Override
-    public void add(ProjectForm form) {
+    public int add(ProjectForm form) {
         String sql= "insert into project(name) values (?)";
 
         try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
@@ -66,6 +66,7 @@ public class ProjectDao implements IDao<Project, ProjectForm> {
         }catch (SQLException e){
             e.printStackTrace();
         }
+        return 0;
     }
 
     @Override

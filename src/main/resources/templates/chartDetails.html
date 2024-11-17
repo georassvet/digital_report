@@ -20,8 +20,8 @@
                 <td th:text="${item.name}"></td>
                 <td>
                     <div class="btn-group">
-                        <a class="btn btn-sm" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id}}">Edit</a>
-                        <form th:action="@{'/projects/' + ${project.id} + '/charts/delete'}">
+                        <a class="btn btn-sm" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id} + '/queries/' + ${item.id}}">Edit</a>
+                        <form th:method="post" th:action="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id} + '/queries/' + ${item.id}+ '/delete'}">
                             <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
                         </form>
                     </div>

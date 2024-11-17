@@ -62,7 +62,7 @@ public class TestTypeDao implements IDao<TestType, TestTypeForm> {
     }
 
     @Override
-    public void add(TestTypeForm form) {
+    public int add(TestTypeForm form) {
         String sql= "insert into test_type(name) values (?)";
         try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
             PreparedStatement statement = connection.prepareStatement(sql)
@@ -73,6 +73,7 @@ public class TestTypeDao implements IDao<TestType, TestTypeForm> {
         }catch (SQLException e){
             e.printStackTrace();
         }
+        return 0;
     }
 
     @Override

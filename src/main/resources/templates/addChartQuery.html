@@ -55,8 +55,8 @@
                 <td th:text="${item.name}"></td>
                 <td>
                     <div class="btn-group">
-                        <a class="btn btn-sm" th:href="@{'/projects/' + ${projectId} + '/charts/'+ ${item.id}}">Edit</a>
-                        <form th:action="@{'/projects/' + ${projectId} + '/charts/delete'}">
+                        <a class="btn btn-sm" th:href="@{'/projects/' + ${projectId} + '/charts/' + ${form.chartId} + '/queries/'+ ${item.id}}">Edit</a>
+                        <form th:action="@{'/projects/' + ${projectId} + '/charts/'+ ${form.chartId} + '/delete'}">
                             <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
                         </form>
                     </div>

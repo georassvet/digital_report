@@ -153,7 +153,65 @@ public class GrafanaService {
 
    }
 
-   public String getQueryData(Connect connect, ChartQuery chart, long start , long end){
+
+
+    public String getApiDsQuery(Connect connect, ChartQuery chart, long start , long end){
+
+        String url = connect.getUrl() + "/api/ds/query";
+
+        Map<String, String> map = new HashMap<>();
+        map.put("expr", chart.getQuery());
+        map.put("from", Long.toString(start));
+        map.put("to", Long.toString(end));
+
+        String body = "{\n" +
+                "    \"queries\": [\n" +
+                "        {\n" +
+                "            \"datasource\": {\n" +
+                "                \"uid\": \"w1Ks0L4nz\",\n" +
+                "                \"type\": \"prometheus\"\n" +
+                "            },\n" +
+                "            \"exemplar\": true,\n" +
+                "            \"expr\": \"${expr}\",\n" +
+                "            \"format\": \"time_series\",\n" +
+                "            \"hide\": false,\n" +
+                "            \"interval\": \"\",\n" +
+                "            \"refId\": \"A\",\n" +
+                "            \"queryType\": \"timeSeriesQuery\",\n" +
+                "            \"requestId\": \"21A\",\n" +
+                "            \"utcOffsetSec\": 28800,\n" +
+                "            \"datasourceId\": 2,\n" +
+                "            \"intervalMs\": 120000,\n" +
+                "            \"maxDataPoints\": 500\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"from\": \"${from}\",\n" +
+                "    \"to\": \"${to}\"\n" +
+                "}'";
+
+        String query = StringSubstitutor.replace(body, map);
+
+        RequestBody requestBody = RequestBody.create(query, MediaType.parse("application/json"));
+        Request request = new Request.Builder().url(url)
+                .addHeader("Authorization", "Bearer " + connect.getToken())
+                .addHeader("Content-Type", "application/json")
+                .post(requestBody)
+                .build();
+
+        Response response= null;
+
+        try {
+            response = client.newCall(request).execute();
+            String resp = response.body().string();
+            response.close();
+            return resp;
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public String getQueryData(Connect connect, ChartQuery chart, long start , long end){
 
         String url = connect.getUrl() + "/api/ds/query";
 
@@ -166,8 +224,8 @@ public class GrafanaService {
                 "      \"queries\": [\n" +
                 "        {\n" +
                 "          \"datasource\": {\n" +
-                "            \"type\": \"prometheus\",\n" +
-                "            \"uid\": \"c4ba342e-db38-4d2d-ae4f-e9ed6c1e0e99\"\n" +
+                "            \"type\": \"influxdb\",\n" +
+                "            \"uid\": \"cfSi1Vxnk\"\n" +
                 "          },\n" +
                 "          \"expr\": \"${expr}\",\n" +
                 "          \"instant\": false,\n" +
@@ -186,6 +244,7 @@ public class GrafanaService {
                 "}";
 
         String query = StringSubstitutor.replace(body, map);
+        System.out.println(query);
 
        RequestBody requestBody = RequestBody.create(query, MediaType.parse("application/json"));
        Request request = new Request.Builder().url(url)
@@ -198,6 +257,7 @@ public class GrafanaService {
 
        try {
            response = client.newCall(request).execute();
+           System.out.println("Response code " + response.code());
            String resp = response.body().string();
            response.close();
            return resp;

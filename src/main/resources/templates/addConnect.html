@@ -58,8 +58,8 @@
                     <td th:text="${item.url}"></td>
                     <td>
                         <div class="btn-group">
-                            <a class="btn btn-sm" th:href="@{'/editDbConnect/' + ${item.id}}">Edit</a>
-                            <form th:action="@{/deleteDbConnect}">
+                            <a class="btn btn-sm" th:href="@{'/admin/connects/' + ${item.id}}">Edit</a>
+                            <form th:method="post" th:action="@{/admin/connects/delete}">
                                 <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
                             </form>
                         </div>

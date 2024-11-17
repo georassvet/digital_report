@@ -71,7 +71,7 @@ public class ChartQueryDao implements IDao<ChartQuery, ChartQueryForm> {
 
 
     @Override
-    public void add(ChartQueryForm form) {
+    public int add(ChartQueryForm form) {
         String sql= "insert into chart_query( chart_id, connect_id, name, query, type) values (?,?,?,?,?)";
 
         try(Connection connection = DriverManager.getConnection(DbUtils.getUrl());
@@ -87,6 +87,7 @@ public class ChartQueryDao implements IDao<ChartQuery, ChartQueryForm> {
         }catch (SQLException e){
             e.printStackTrace();
         }
+        return 0;
     }
 
     @Override

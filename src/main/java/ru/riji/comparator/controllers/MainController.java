@@ -5,13 +5,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.riji.comparator.dao.*;
+import ru.riji.comparator.dto.ProjectDto;
 import ru.riji.comparator.dto.TestDto;
 import ru.riji.comparator.form.*;
 import ru.riji.comparator.models.Chart;
 import ru.riji.comparator.models.ChartQuery;
+import ru.riji.comparator.models.TestData;
+import ru.riji.comparator.services.ChartService;
 import ru.riji.comparator.services.TestService;
 
 import java.util.List;
@@ -22,7 +26,11 @@ public class MainController {
     @Autowired
     private TestService testService;
     @Autowired
+    private ChartService chartService;
+    @Autowired
     private ChartDao chartDao;
+    @Autowired
+    private TestDao testDao;
     @Autowired
     private ChartQueryDao chartQueryDao;
     @Autowired
@@ -33,6 +41,12 @@ public class MainController {
     private TestTypeDao testTypeDao;
     @Autowired
     private ConnectDao connectDao;
+
+    @ModelAttribute("projects")
+    public List<ProjectDto> getProjects() {
+        return testService.getProjects();
+    }
+
     @GetMapping(value = {"/", "/projects"})
     public String index(Model model){
         model.addAttribute("items", testService.getProjects());
@@ -49,6 +63,15 @@ public class MainController {
     public String addTest(Model model, @PathVariable("projectId") int projectId){
         model.addAttribute("form", new TestForm(projectId));
         model.addAttribute("testTypes", testTypeDao.getAll());
+        model.addAttribute("items", testDao.getAllByProjectId(projectId));
+        return "/addTest";
+    }
+
+    @GetMapping(value = {"/projects/{projectId}/tests/{testId}"})
+    public String editTest(Model model, @PathVariable("projectId") int projectId,  @PathVariable("testId") int testId){
+        model.addAttribute("form", new TestForm(testDao.getById(testId)));
+        model.addAttribute("testTypes", testTypeDao.getAll());
+        model.addAttribute("items", testDao.getAllByProjectId(projectId));
         return "/addTest";
     }
 
@@ -56,6 +79,12 @@ public class MainController {
     public String addTest(@PathVariable("projectId") int projectId, TestForm form){
         testService.addTest(form);
         return "redirect:/projects/" + projectId +"/tests";
+    }
+
+    @PostMapping(value = {"/projects/{projectId}/tests/{testId}/delete"})
+    public String deleteTest(@PathVariable("projectId") int projectId,@PathVariable("testId") int testId,  int id){
+        testDao.delete(id);
+        return "redirect:/projects/" + projectId +"/tests/add";
     }
 
     @GetMapping(value = {"/projects/{projectId}/charts"})
@@ -89,9 +118,32 @@ public class MainController {
         return "/addChart";
     }
 
+    @GetMapping(value = {"/projects/{projectId}/charts/{chartId}/clone"})
+    public String cloneChart(Model model, @PathVariable("projectId") int projectId, @PathVariable("chartId") int chartId){
+        chartService.cloneChart(chartId);
+        return "redirect:/projects/" + projectId + "/charts/add";
+    }
+
+    @GetMapping(value = {"/projects/{projectId}/charts/{chartId}/delete"})
+    public String deleteChart(Model model, @PathVariable("projectId") int projectId,@PathVariable("chartId") int chartId){
+        chartDao.delete(chartId);
+        return "redirect:/projects/" + projectId + "/charts/add";
+    }
+
+
+
     @GetMapping(value = {"/projects/{projectId}/charts/{chartId}/queries/add"})
     public String addChartQuery(Model model, @PathVariable("projectId") int projectId, @PathVariable("chartId") int chartId){
         model.addAttribute("form", new ChartQueryForm(chartId));
+        model.addAttribute("connects", connectDao.getAll());
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("items", chartQueryDao.getByChartId(chartId));
+        return "/addChartQuery";
+    }
+
+    @GetMapping(value = {"/projects/{projectId}/charts/{chartId}/queries/{queryId}"})
+    public String addChartQuery(Model model, @PathVariable("projectId") int projectId, @PathVariable("chartId") int chartId, @PathVariable("queryId") int queryId){
+        model.addAttribute("form", new ChartQueryForm(chartQueryDao.getById(queryId)));
         model.addAttribute("connects", connectDao.getAll());
         model.addAttribute("projectId", projectId);
         model.addAttribute("items", chartQueryDao.getByChartId(chartId));

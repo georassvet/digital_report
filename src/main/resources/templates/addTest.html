@@ -51,11 +51,11 @@
             </thead>
             <tbody>
             <tr th:each="item : ${items}">
-                <td th:text="${item.name}"></td>
+                <td th:text="${item.release}"></td>
                 <td>
                     <div class="btn-group">
-                        <a class="btn btn-sm" th:href="@{'/test-type/' + ${item.id}}">Edit</a>
-                        <form th:action="@{/test-type/delete}">
+                        <a class="btn btn-sm" th:href="@{'/projects/' + ${form.projectId} + '/tests/' + ${item.id}}">Edit</a>
+                        <form method="post" th:action="@{'/projects/' + ${form.projectId} + '/tests/' + ${item.id} + '/delete'}">
                             <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
                         </form>
                     </div>
