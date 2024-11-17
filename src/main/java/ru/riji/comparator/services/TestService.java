@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.riji.comparator.dao.*;
 import ru.riji.comparator.dto.ProjectDto;
+import ru.riji.comparator.dto.TestDataDto;
 import ru.riji.comparator.dto.TestDto;
 import ru.riji.comparator.form.TestForm;
 import ru.riji.comparator.helpers.TimeUtil;
@@ -47,22 +48,17 @@ public class TestService implements ITestService{
         testDao.add(form);
     }
 
-    public Map<Integer, List<QueryData>> getData(int testId, int chartId) {
-        Map<Integer, List<QueryData>> result = new HashMap<>();
+    public TestDataDto getData(int testId, int chartId) {
+        Map<Integer, List<QueryData>> data = new HashMap<>();
         Test test = testDao.getById(testId);
         Chart chart = chartDao.getById(chartId);
         List<ChartQuery> chartQueries = chartQueryDao.getByChartId(chart.getId());
 
-        String ldtStart = TimeUtil.convertToUtc(test.getStart());
-        String ldtEnd = TimeUtil.convertToUtc(test.getEnd());
-
         for(ChartQuery query: chartQueries){
-            List<QueryData> queryData = grafanaService.getQueryData(testId, ldtStart, ldtEnd, query);
-            result.put(query.getId(), queryData);
+            List<QueryData> queryData = grafanaService.getQueryData(test, query);
+            data.put(query.getId(), queryData);
         }
-
-
-   return result;
+      return new TestDataDto(test.getId(), test.getRelease(), data);
     }
 
     public Map<Integer, List<QueryData>> getData2(int testId, int panelId) {

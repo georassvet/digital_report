@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 @Data
 public class ChartStdDev {
-   List<Point> avgMap;
-   List<Point> stdPlus2;
-   List<Point> stdMinus2;
+   List<Point> avg;
+   List<Point> stdDev;
+   List<Point> zScore;
    List<Point> test;
 }

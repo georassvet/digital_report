@@ -7,11 +7,11 @@ let allCharts = [];
 let borderColors = ['rgba(245, 39, 39, 0.9)','rgba(31, 227, 99, 0.9)', 'rgba(31, 89, 227, 0.9)', 'rgba(152, 31, 227, 0.9)'];
 let backgroundColors = ['rgba(245, 39, 39, 0.7)','rgba(31, 227, 99, 0.7)','rgba(31, 89, 227, 0.7)', 'rgba(152, 31, 227, 0.7)'];
 
-
 $(function(){
     projectId = $("#projectId").data("id");
-    getCharts();
     getTests();
+    getCharts();
+
 })
 
 function getCharts(){
@@ -36,13 +36,30 @@ function getCharts(){
                 'aria-labelledby': `row-${item.id}`,
 
             });
-            let accordionBody = $("<div>", { class: "accordion-body panel-group",'data-id':item.id });
+            let accordionBody = $("<div>", { class: "accordion-body panel-group", 'data-id':item.id });
+            let totalTableElement = $("<table>", { 'data-id': item.id });
+            tables.set(item.id, new TotalTable());
             accordionHeader.append(accordionBtn);
+            accordionBody.append(totalTableElement);
             accordionCollapse.append(accordionBody);
             accordionItem.append(accordionHeader).append(accordionCollapse);
             dashboard.append(accordionItem);
         })
+        updateCompare();
     })
+}
+
+function updateCompare(){
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams != 0){
+        let param = urlParams.get('testId');
+        let testIds = param.split(',').map(value => parseInt(value.trim(), 10)).filter(num => !isNaN(num));
+        for (const testId of testIds) {
+                $(`.item[data-id=${testId}]`).addClass("active");
+                addTest(testId);
+            }
+        updateUrl();
+    }
 }
 
 function getTests(){
@@ -91,23 +108,33 @@ function deleteDataset(testId) {
 
    $(document).on("click",".item",function(e) {
     var testId = $(this).data("id");
+    var testName = $(this).data("name");
     if (testSet.has(testId)){
         testSet.delete(testId);
         $(this).removeClass("active");
         deleteDataset(testId);
     } else {
         $(this).addClass("active");
-         testSet.add(testId);
-         var testName = $(this).data("name");
-         var size = testSet.size-1;
-             $.each(charts, function(i, chart) {
-                     $.get('/api/data', { 'testId': testId, 'panelId': chart.id }, function(data){
-                          createCharts(data, chart, testId, testName, size);
-                     });
-             })
-        }
+         addTest(testId);
         $(".split-block").remove();
+         }
+         updateUrl();
     })
+
+    function addTest(testId){
+        testSet.add(testId);
+        var size = testSet.size-1;
+        $.each(charts, function(i, chart) {
+            $.get('/api/data', { 'testId': testId, 'panelId': chart.id }, function(data){
+                createCharts(data, chart, size);
+            });
+        })
+    }
+
+    function updateUrl(){
+        let testParams = '?testId=' + [...testSet].join(',');
+        window.history.pushState(null, '', testParams);
+    }
 
     $(document).on("click",".split-btn",function(e) {
             e.preventDefault();
@@ -134,10 +161,10 @@ function deleteDataset(testId) {
             $(canvasWrapper).after(splitBlock);
         })
 
-    function createCharts(data, chart, testId, testName, size){
+    function createCharts(data, chart, size){
            let panelGroup = $(`.panel-group[data-id=${chart.id}]`);
-
-            $.each(data, function(k1, v1) {
+           let totalTable  = tables.get(chart.id);
+            $.each(data.metric, function(k1, v1) {
                 $.each(v1, function(k2, v2) {
                 let chartId = `${chart.id}_${v2.queryId}_${k2}`;
                 let chartItem = Chart.getChart(chartId);
@@ -157,15 +184,15 @@ function deleteDataset(testId) {
 
                 }
 
-                let data =  v2.points.map(({x,y}) => ({"x": x - v2.testStart, "y":y}));
+                let points =  v2.points.map(({x,y}) => ({"x": x - v2.testStart, "y":y}));
 
                 const newDataset = {
                       borderWidth: 0.5,
                       radius:1,
                       pointRadius:0.5,
-                      id: testId,
-                      label: `${testName}`,
-                      data: data, //v2.points,
+                      id: data.testId,
+                      label: data.testName,
+                      data: points, //v2.points,
                       //fill: true,
                       backgroundColor: backgroundColors[size],
                       borderColor: borderColors[size]
@@ -174,8 +201,11 @@ function deleteDataset(testId) {
                 chartItem.data.datasets.push(newDataset);
                 chartItem.update();
 
-                let tr = $("<tr>", {"data-id": testId })
-                                  .append($("<td>",{ text: testName }))
+
+                totalTable.add(v2.queryName, v2.p90, data.testId)
+
+                let tr = $("<tr>", {"data-id": data.testId })
+                                  .append($("<td>",{ text: data.testName }))
                                   .append($("<td>", { text: v2.min }))
                                   .append($("<td>", { text: v2.avg }))
                                   .append($("<td>", { text: v2.p90 }))
@@ -183,6 +213,7 @@ function deleteDataset(testId) {
 
                 $(`tbody[data-id=${chartId}]`).append(tr);
           })
+
        })
     }
 

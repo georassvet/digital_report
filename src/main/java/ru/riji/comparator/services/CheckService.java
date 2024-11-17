@@ -51,22 +51,24 @@ public class CheckService {
         List<Point> stdDev = new ArrayList<>();
         List<Point> stdDevPlus2 = new ArrayList<>();
         List<Point> stdDevMinus2 = new ArrayList<>();
+        List<Point> zScores = new ArrayList<>();
         for (int i = 0; i < avgMap.size(); i++) {
             long pointX = avgMap.get(i).getX();
             double avgVal = avgMap.get(i).getY();
-
             double stdDevVal = stdDev(avgVal, p90Map.get(i).getY());
+            double zScore = zScore(avgVal, p90Map.get(i).getY(), stdDevVal);
 
             stdDev.add(new Point(pointX, stdDevVal));
             stdDevPlus2.add(new Point(pointX, avgVal + stdDevVal * 2));
             stdDevMinus2.add(new Point(pointX, avgVal - stdDevVal * 2 ));
+            zScores.add(new Point(pointX, zScore));
         }
 
         ChartStdDev chartStdDev = new ChartStdDev();
-        chartStdDev.setAvgMap(avgMap);
+        chartStdDev.setAvg(avgMap);
 
-        chartStdDev.setStdPlus2(stdDevPlus2);
-        chartStdDev.setStdMinus2(stdDevMinus2);
+        chartStdDev.setStdDev(stdDev);
+        chartStdDev.setZScore(zScores);
         chartStdDev.setTest(convertTest);
 
         return chartStdDev;
@@ -76,6 +78,11 @@ public class CheckService {
    public static double  stdDev(double avg,double value){
         return Math.sqrt(Math.pow(avg-value, 2));
    }
+
+    public static double  zScore(double avg, double value, double stdDev){
+        double z = (value - avg) / stdDev;
+        return z;
+    }
 
 
 

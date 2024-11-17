@@ -49,37 +49,4 @@ public class DataController {
         return new ResponseEntity<>( HttpStatus.OK);
     }
 
-    @GetMapping(value = {"/api/config"})
-    public ResponseEntity<?> getTestData(Model model){
-
-        List<String> set1= new ArrayList<>();
-        set1.add("container1");
-        set1.add("container2");
-        set1.add("container3");
-        List<String> set2 = new ArrayList<>();
-        set2.add("container1");
-        set2.add("container2");
-        List<String> set3 = new ArrayList<>();
-        set3.add("container1");
-        set3.add("container2");
-
-       List<NsGroup> nsGroups = new ArrayList<>();
-
-        nsGroups.add(new NsGroup("host1", "ns1", set1));
-        nsGroups.add(new NsGroup("host1", "ns2", set2));
-        nsGroups.add(new NsGroup("host2", "ns1", set3));
-
-        Config config = new Config();
-        config.setConfigs(nsGroups);
-
-        int[] exprIds = {1,2,3,4,5,6,7};
-        config.setExprIds(exprIds);
-
-        return new ResponseEntity<>(config, HttpStatus.OK);
-    }
-
-    @PostMapping(value = {"/api/config/set"})
-    public ResponseEntity<?> updateChartOrder(Model model, @RequestBody Config config){
-        return new ResponseEntity<>( HttpStatus.OK);
-    }
 }

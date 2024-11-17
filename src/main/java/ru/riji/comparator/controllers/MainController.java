@@ -39,10 +39,11 @@ public class MainController {
         model.addAttribute("items", testService.getProjects());
         return "projects";
     }
-    @GetMapping(value = { "/check"})
-    public String check(Model model){
-        return "check";
+    @GetMapping(value = { "/analyze"})
+    public String analyze(Model model){
+        return "analyze";
     }
+
 
     @GetMapping(value = {"/projects/{projectId}/tests"})
     public String tests(Model model, @PathVariable("projectId") int projectId){

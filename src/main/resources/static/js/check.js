@@ -18,7 +18,7 @@ function getCheck(){
           let chartItem = createChart(ctx);
           $("#dash").append(ctx);
 
-                let avgMapData =  item.avgMap.map(({x,y}) => ({"x": x , "y":y}));
+                let avgMapData =  item.avg.map(({x,y}) => ({"x": x , "y":y}));
 
                             const avgMapDataset = {
                                   borderWidth: 1,
@@ -33,7 +33,7 @@ function getCheck(){
 
                             chartItem.data.datasets.push(avgMapDataset);
 
-                             let stdPlus2 =  item.stdPlus2.map(({x,y}) => ({"x": x , "y":y}));
+                             let stdPlus2 =  item.std.map(({x,y}) => ({"x": x , "y":y}));
 
                                                         const stdPlus2Dataset = {
                                                               borderWidth: 1,
@@ -47,7 +47,7 @@ function getCheck(){
                                                         };
 
                                                         chartItem.data.datasets.push(stdPlus2Dataset);
-                               let stdMinus2 =  item.stdMinus2.map(({x,y}) => ({"x": x , "y":y}));
+                               let stdMinus2 =  item.std.map(({x,y}) => ({"x": x , "y":y}));
 
                                                                                      const stdMinus2Dataset = {
                                                                                            borderWidth: 1,
