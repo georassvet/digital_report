@@ -8,5 +8,4 @@ public class StubService {
     public void getData(){
 
     }
-
 }
