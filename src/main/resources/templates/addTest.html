@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <title>AddTestType</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <form method="post" th:action="@{'/projects/' + ${form.projectId} + '/tests/add'}" th:object="${form}">
+        <input type="hidden" class="form-control" th:field="*{id}">
+        <input type="hidden" class="form-control" th:field="*{projectId}">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="testTypeId" class="form-label">TestType</label><a th:href="@{/admin/test-type/add}">Add</a>
+                        <select size="5" class="form-select" th:field="*{testTypeId}" aria-label="Default select example" id="testTypeId">
+                            <option th:each="testType : ${testTypes}"
+                                    th:text="${testType.name}"
+                                    th:value="${testType.id}">
+                        </select>
+                        </div>
+                    <div class="col-md-6">
+                        <label for="release" class="form-label">Release</label>
+                        <input th:field="*{release}" type="text" class="form-control" id="release">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="start" class="form-label">Start</label>
+                        <input th:field="*{start}" type="datetime-local" class="form-control" id="start">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="end" class="form-label">End</label>
+                        <input th:field="*{end}" type="datetime-local" class="form-control" id="end">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="btn btn-sm btn-light border" type="submit" value="Save">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.release}"></td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-sm" th:href="@{'/projects/' + ${form.projectId} + '/tests/' + ${item.id}}">Edit</a>
+                        <form th:method="post" th:action="@{'/projects/' + ${form.projectId} + '/tests/' + ${item.id} + '/delete'}">
+                            <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

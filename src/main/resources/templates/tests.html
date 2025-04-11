@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <title>Sql_to_influx</title>
+
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 id="projectId" th:attr="data-id=${project.id}" th:text="${project.name}"></h1>
+            <a class="btn btn-sm btn-light border" th:href="@{'/projects/' + ${project.id} + '/charts/add'}">Add Chart</a>
+            <a class="btn btn-sm btn-light border" th:href="@{'/projects/' + ${project.id} + '/tests/add'}">Add Test</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="filters"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="tests"></div>
+        </div>
+    </div>
+    <div id="dashboard"></div>
+    <div th:replace = "~{/fragments/scripts.html :: tests}"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+server:
+  port: 11005
+spring:
+  #jackson:
+  #serialization:
+  #FAIL_ON_EMPTY_BEANS: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://95.163.229.164:5435/metric_care
+    username: myuser
+    password: Kd01234567sjg+@##@
+    hikari:
+      connectionTimeout:  20000
+      maximumPoolSize: 5
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+        use_sql_comments: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      #ddl-auto: create
+      ddl-auto: update
