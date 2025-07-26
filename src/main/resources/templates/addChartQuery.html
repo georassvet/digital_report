@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <title>AddTestType</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <form method="post" th:action="@{'/projects/' + ${projectId} + '/charts/'  + ${form.chartId} + '/queries/add'}" th:object="${form}">
+        <input type="hidden" class="form-control" th:field="*{id}">
+        <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-between">
+                            <label for="connectId" class="form-label">Connect</label>
+                            <a class="btn btn-sm btn-light border" th:href="@{/admin/connects/add}">Add</a>
+                        </div>
+                        <select size="5" class="form-select" th:field="*{connectId}" aria-label="Default select example" id="connectId">
+                            <option th:each="connect : ${connects}"
+                                    th:text="${connect.name}"
+                                    th:value="${connect.id}">
+                        </select>
+                    </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">NamePattern</label>
+                        <input th:field="*{name}" type="text" class="form-control" id="name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="type" class="form-label">Type</label>
+                        <input th:field="*{type}" type="text" class="form-control" id="type">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="query" class="form-label">Query</label>
+                        <textarea th:field="*{query}" type="text" class="form-control" id="query" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="btn btn-sm btn-light border" type="submit" value="Save">
+                    </div>
+                </div>
+                </div>
+
+            </div>
+    </form>
+    <div class="row">
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.name}"></td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-sm" th:href="@{'/projects/' + ${projectId} + '/charts/' + ${form.chartId} + '/queries/' + ${item.id}}">Edit</a>
+                        <form method="post" th:action="@{'/projects/' + ${projectId} + '/charts/' + ${form.chartId} + '/queries/' + ${item.id} + '/delete'}">
+                            <button class="btn btn-sm" type="submit" th:name="id" th:value="${item.id}">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

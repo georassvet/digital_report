@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <title>Sql_to_influx</title>
+
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <a th:href="@{/addSqlTask}">Add</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="tasks"></div>
+        </div>
+    </div>
+    <div th:replace = "/fragments/scripts.html :: script_sql"></div>
+</div>
+</body>
+</html>

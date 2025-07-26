@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>AddOse</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+<form method="post" th:action="@{/addInflux}" th:object="${form}">
+    <input type="hidden" class="form-control" th:field="*{id}">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Name</label>
+                    <input th:field="*{name}" type="text" class="form-control" id="name">
+                </div>
+                <div class="col-md-6">
+                    <label for="url" class="form-label">Url (http://89.108.64.113:8086)</label>
+                    <input th:field="*{url}" type="text" class="form-control" id="url">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="user" class="form-label">User</label>
+                    <input th:field="*{user}" type="text" class="form-control" id="user">
+                </div>
+                <div class="col-md-6">
+                    <label for="pass" class="form-label">Password</label>
+                    <input th:field="*{pass}" type="password" class="form-control" id="pass">
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" value="Save">
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+</body>
+</html>

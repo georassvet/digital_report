@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <title>AddTestType</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <h6>Queries</h6>
+            <a class="btn btn-sm border btn-light" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id} + '/queries/add'}">Add Query</a>
+        </div>
+        <div class="col-md-12">
+            <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${queries}">
+                <td th:text="${item.name}"></td>
+                <td>
+                    <div class="d-flex">
+                        <a class="btn btn-sm border btn-light" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id}}">Edit</a>
+                        <form th:action="@{'/projects/' + ${project.id} + '/charts/delete'}">
+                            <button class="btn btn-sm border btn-light" type="submit" th:name="id" th:value="${item.id}">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <h6>Alerts</h6>
+            <a class="btn btn-sm border btn-light" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${chart.id} + '/alerts/add'}">Add Alert</a>
+        </div>
+        <div class="col-md-12">
+            <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${alerts}">
+                <td th:text="${item.name}"></td>
+                <td>
+                    <div class="d-flex">
+                        <a class="btn btn-sm border btn-light" th:href="@{'/projects/' + ${project.id} + '/charts/'+ ${item.id}}">Edit</a>
+                        <form th:action="@{'/projects/' + ${project.id} + '/charts/delete'}">
+                            <button class="btn btn-sm border btn-light" type="submit" th:name="id" th:value="${item.id}">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

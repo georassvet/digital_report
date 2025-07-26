@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{fragments/main_layout}">
+<head>
+    <title>Sql_to_influx</title>
+
+</head>
+<body>
+<div layout:fragment="content" class="container-fluid">
+    <div class="row">
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div id="items"></div>
+        </div>
+        <div class="col-md-8">
+            <div id="dash"></div>
+        </div>
+    </div>
+
+    <div th:replace = "~{fragments/scripts.html :: check}"></div>
+</div>
+</body>
+</html>
