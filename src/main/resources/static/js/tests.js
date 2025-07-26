@@ -123,13 +123,13 @@ function deleteDataset(testId) {
                 let data =  v2.points.map(({x,y}) => ({"x": x - v2.testStart, "y":y}));
 
                 const newDataset = {
-                      borderWidth: 0,
+                      borderWidth: 0.5,
                       radius:1,
-                      pointRadius:1,
+                      pointRadius:0.5,
                       id: `${testId}-${testName}`,
                       label: `${testName} ${v2.queryName}`,
                       data: data, //v2.points,
-                      fill: true,
+                      //fill: true,
                       backgroundColor: backgroundColors[size],
                       borderColor: borderColors[size]
                 };
@@ -160,21 +160,20 @@ function deleteDataset(testId) {
 //                 displayFormats: {
 //                        minute : "mm"
 //                 }
-//                 minUnit: 'millisecond',
-//                 unit: 'minute',
-//                 displayFormats: {
+                minUnit: 'millisecond',
+                unit: 'minute',
+ //                displayFormats: {
 //                                  minute: 'HH:mm:ss'
 //                },
 //                tooltipFormat: 'HH:mm:ss',
 
                         // round: 'day'
-                        tooltipFormat: 'yyyy-MM-dd HH:mm',
+                        tooltipFormat: 'mm',
                         displayFormats: {
                             millisecond: 'HH:mm:ss.SSS',
                             second: 'HH:mm:ss',
-                            minute: 'HH:mm',
-                            hour: 'HH',
-                            day: 'dd HH'
+                            minute: 'mm',
+                            hour: 'HH'
                         }
              },
               title: {
