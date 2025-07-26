@@ -1,18 +1,18 @@
 body{
-   background-color:  #eeeeee;
+   background-color:  #eee;
 }
 #items{
         display: flex;
         flex-flow: column;
+        background-color: #fff;
 }
 .item {
    padding: 0.5rem 0.5rem;
    border-bottom: 1px solid #E0E0E0;
    justify-content: space-between;
    display: flex;
-   background-color: #ffffff;
    align-items: center;
-
+   cursor:pointer;
 }
 .item:last-child{
     border-bottom: none;
@@ -105,5 +105,15 @@ body{
      display: flex;
      flex-flow: column;
      padding-right: 1rem;
+}
+
+.canvas-wrapper {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+.canvas-name{
+    font-weight: 500;
+    font-size:0.8rem;
 }
 

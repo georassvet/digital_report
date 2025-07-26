@@ -114,10 +114,13 @@ function deleteDataset(testId) {
                 let chartItem = Chart.getChart(chartId);
 
                 if(chartItem == null){
-                     let ctx = $("<canvas>", { id: chartId });
-                     chartItem = createChart(ctx, chart);
-                     chartSet.add(chartItem);
-                     panelGroup.append(ctx);
+                    let canvasWrapper = $("<div>", { class: "canvas-wrapper" });
+                    let canvasName = $("<div>", { class: "canvas-name", text:`${v2.queryName}`});
+                    let canvas = $("<canvas>", { id: chartId });
+                    chartItem = createChart(canvas, chart);
+                    chartSet.add(chartItem);
+                    canvasWrapper.append(canvasName).append(canvas);
+                    panelGroup.append(canvasWrapper);
                 }
 
                 let data =  v2.points.map(({x,y}) => ({"x": x - v2.testStart, "y":y}));
@@ -127,7 +130,7 @@ function deleteDataset(testId) {
                       radius:1,
                       pointRadius:0.5,
                       id: `${testId}-${testName}`,
-                      label: `${testName} ${v2.queryName}`,
+                      label: `${testName}`,
                       data: data, //v2.points,
                       //fill: true,
                       backgroundColor: backgroundColors[size],
