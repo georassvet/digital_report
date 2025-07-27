@@ -1,8 +1,8 @@
 
-var projectId;
-var charts;
-var testSet = new Set();
-var chartSet = new Set();
+let projectId;
+let charts;
+let testSet = new Set();
+let allCharts = [];
 
 let borderColors = ['rgba(245, 39, 39, 0.9)','rgba(31, 227, 99, 0.9)', 'rgba(31, 89, 227, 0.9)', 'rgba(152, 31, 227, 0.9)'];
 let backgroundColors = ['rgba(245, 39, 39, 0.7)','rgba(31, 227, 99, 0.7)','rgba(31, 89, 227, 0.7)', 'rgba(152, 31, 227, 0.7)'];
@@ -72,24 +72,27 @@ function createTest(item){
 }
 
 function deleteDataset(testId) {
-    testSet.delete(testId);
-    if (testSet.size > 0){
-        $.each(chartSet, function(i, chart) {
-    let data = chart.data;
-    data.datasets.find((dataset, index) => {
-        if (dataset.id === 'myId') {
-           data.datasets.splice(index, 1);
-           return true; // stop searching
+
+allCharts.forEach(chart => {
+       let data = chart.data;
+        data.datasets.find((dataset, index) => {
+                       if (dataset.id === testId) {
+                           data.datasets.splice(index, 1);
+                           return true; // stop searching
+                        }
+                   });
+        if(data.datasets.length == 0){
+            chart.canvas.closest('.canvas-wrapper').remove();
         }
+        chart.update();
     });
-    })
-  }
 }
 
    $(document).on("click",".item",function(e) {
     e.preventDefault();
     var testId = $(this).data("id");
     if (testSet.has(testId)){
+        testSet.delete(testId);
         $(this).removeClass("active");
         deleteDataset(testId);
     } else {
@@ -114,11 +117,11 @@ function deleteDataset(testId) {
                 let chartItem = Chart.getChart(chartId);
 
                 if(chartItem == null){
-                    let canvasWrapper = $("<div>", { class: "canvas-wrapper" });
+                    let canvasWrapper = $("<div>", { class: "canvas-wrapper",  "data-id": chartId });
                     let canvasName = $("<div>", { class: "canvas-name", text:`${v2.queryName}`});
                     let canvas = $("<canvas>", { id: chartId });
                     chartItem = createChart(canvas, chart);
-                    chartSet.add(chartItem);
+                    allCharts.push(chartItem);
                     canvasWrapper.append(canvasName).append(canvas);
                     panelGroup.append(canvasWrapper);
                 }
@@ -129,7 +132,7 @@ function deleteDataset(testId) {
                       borderWidth: 0.5,
                       radius:1,
                       pointRadius:0.5,
-                      id: `${testId}-${testName}`,
+                      id: testId,
                       label: `${testName}`,
                       data: data, //v2.points,
                       //fill: true,
@@ -148,8 +151,7 @@ function deleteDataset(testId) {
     var chart =  new Chart(ctx, {
      type: 'line',
      data: {
-      datasets: datasets,
-      borderWidth:1
+      datasets: datasets
     },
     options: {
       scales: {

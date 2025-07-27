@@ -24,7 +24,24 @@ public class TestDao {
     public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public void update(TestForm form) {
+        String sql= "update test set start=?, end=?, release=?, update_at=?, test_type_id=? where id=?";
 
+        try(Connection connection = DriverManager.getConnection(dbUtils.getUrl());
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ){
+            String now = LocalDateTime.now().format(dateTimeFormatter);
+
+            statement.setString(1, form.getStart());
+            statement.setString(2, form.getEnd());
+            statement.setString(3, form.getRelease());
+            statement.setString(4, now);
+            statement.setInt(5, form.getTestTypeId());
+            statement.setInt(6, form.getId());
+            statement.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public int add(TestForm form) {

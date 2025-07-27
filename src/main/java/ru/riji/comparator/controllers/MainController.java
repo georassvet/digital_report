@@ -31,6 +31,8 @@ public class MainController {
     @Autowired
     private TestTypeDao testTypeDao;
     @Autowired
+    private TestDao testDao;
+    @Autowired
     private ConnectDao connectDao;
     @GetMapping(value = {"/", "/projects"})
     public String index(Model model){
@@ -66,7 +68,13 @@ public class MainController {
 
     @PostMapping(value = {"/projects/{projectId}/tests/add"})
     public String addTest(@PathVariable("projectId") int projectId, TestForm form){
-        testService.addTest(form);
+        if(form.getId() ==0){
+            testService.addTest(form);
+        } else {
+            testService.editTest(form);
+        }
+
+
         return "redirect:/projects/" + projectId +"/tests";
     }
 
@@ -75,6 +83,15 @@ public class MainController {
         testService.deleteTest(testId);
         return "redirect:/projects/" + projectId +"/tests/add";
     }
+
+    @GetMapping(value = {"/projects/{projectId}/tests/{testId}"})
+    public String addTest(Model model, @PathVariable("projectId") int projectId, @PathVariable("testId") int testId){
+        model.addAttribute("form", new TestForm(testDao.getById(testId)));
+        model.addAttribute("testTypes", testTypeDao.getAll());
+        model.addAttribute("items", testService.getTestsByProjectId(projectId));
+        return "addTest";
+    }
+
 
     @GetMapping(value = {"/projects/{projectId}/charts"})
     public String charts(Model model, @PathVariable("projectId") int projectId){
@@ -129,7 +146,6 @@ public class MainController {
         model.addAttribute("items", chartQueryDao.getByChartId(chartId));
         return "addChartQuery";
     }
-
 
 
     @PostMapping(value = {"/projects/{projectId}/charts/{chartId}/queries/add"})

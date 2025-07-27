@@ -13,7 +13,10 @@
             <div class="col-md-8">
                 <div class="row">
                     <div class="col-md-6">
-                        <label for="testTypeId" class="form-label">TestType</label><a th:href="@{/admin/test-type/add}">Add</a>
+                        <div class="label-with-btn">
+                            <label for="testTypeId" class="form-label">TestType</label>
+                            <a class="btn btn-sm btn-light border" th:href="@{/admin/test-type/add}">Add</a>
+                        </div>
                         <select size="5" class="form-select" th:field="*{testTypeId}" aria-label="Default select example" id="testTypeId">
                             <option th:each="testType : ${testTypes}"
                                     th:text="${testType.name}"

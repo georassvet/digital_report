@@ -175,7 +175,7 @@ public class GrafanaService {
                 List<Point> points = new ArrayList<>();
                 for (int j = 0; j < values.size(); j++) {
                     JsonArray point = values.get(j).getAsJsonArray();
-                    long timestamp = point.get(0).getAsLong()*1000;
+                    long timestamp = point.get(0).getAsLong() * 1000;
                     double value = point.get(1).getAsDouble();
                     //long diff = timestamp - testStart;
                     points.add(new Point(timestamp, value));

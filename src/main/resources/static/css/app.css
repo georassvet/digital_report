@@ -116,4 +116,10 @@ body{
     font-weight: 500;
     font-size:0.8rem;
 }
+.label-with-btn{
+    display:flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items:center;
+}
 

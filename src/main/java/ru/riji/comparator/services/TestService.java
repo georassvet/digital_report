@@ -138,4 +138,8 @@ public class TestService implements ITestService{
     public void deleteTest(int testId) {
         testDao.delete(testId);
     }
+
+    public void editTest(TestForm form) {
+        testDao.update(form);
+    }
 }
