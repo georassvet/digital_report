@@ -14,6 +14,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.riji.comparator.dao.ConnectDao;
 import ru.riji.comparator.dao.TestDao;
+import ru.riji.comparator.helpers.StatUtil;
 import ru.riji.comparator.helpers.TimeUtil;
 import ru.riji.comparator.models.*;
 import ru.riji.comparator.runners.HttpRunner;
@@ -180,12 +181,20 @@ public class GrafanaService {
                     //long diff = timestamp - testStart;
                     points.add(new Point(timestamp, value));
                 }
+
+
                 QueryData queryData = new QueryData();
                 queryData.setTestStart(testStart);
                 queryData.setQueryId(query.getId());
                 queryData.setChartId(query.getChartId());
                 queryData.setPoints(points);
                 queryData.setQueryName(label);
+                queryData.setMax(String.format("%.3f",points.stream().mapToDouble(Point::getY).max().getAsDouble()));
+                queryData.setMin(String.format("%.3f", points.stream().mapToDouble(Point::getY).min().getAsDouble()));
+                queryData.setAvg(String.format("%.3f",points.stream().mapToDouble(Point::getY).average().getAsDouble()));
+                queryData.setP90(String.format("%.3f",StatUtil.calculatePercentile(points.stream().map(x->x.getY()).collect(Collectors.toList()), 90.0)));
+                queryData.setP95(String.format("%.3f",StatUtil.calculatePercentile(points.stream().map(x->x.getY()).collect(Collectors.toList()), 95.0)));
+
                 list.add(queryData);
             }
         }

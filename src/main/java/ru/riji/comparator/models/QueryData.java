@@ -12,4 +12,11 @@ public class QueryData {
    private String queryName;
    private long testStart;
    private List<Point> points;
+
+   private String avg;
+   private String p90;
+   private String p95;
+   private String min;
+   private String max;
+
 }

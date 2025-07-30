@@ -73,7 +73,7 @@ function createTest(item){
 
 function deleteDataset(testId) {
 
-allCharts.forEach(chart => {
+    allCharts.forEach(chart => {
        let data = chart.data;
         data.datasets.find((dataset, index) => {
                        if (dataset.id === testId) {
@@ -86,6 +86,8 @@ allCharts.forEach(chart => {
         }
         chart.update();
     });
+
+    $(`tr[data-id="${testId}"]`).remove();
 }
 
    $(document).on("click",".item",function(e) {
@@ -119,11 +121,13 @@ allCharts.forEach(chart => {
                 if(chartItem == null){
                     let canvasWrapper = $("<div>", { class: "canvas-wrapper",  "data-id": chartId });
                     let canvasName = $("<div>", { class: "canvas-name", text:`${v2.queryName}`});
+                    let chartTable = createTable(chartId);
                     let canvas = $("<canvas>", { id: chartId });
                     chartItem = createChart(canvas, chart);
                     allCharts.push(chartItem);
-                    canvasWrapper.append(canvasName).append(canvas);
+                    canvasWrapper.append(canvasName).append(canvas).append(chartTable);
                     panelGroup.append(canvasWrapper);
+
                 }
 
                 let data =  v2.points.map(({x,y}) => ({"x": x - v2.testStart, "y":y}));
@@ -142,8 +146,29 @@ allCharts.forEach(chart => {
 
                 chartItem.data.datasets.push(newDataset);
                 chartItem.update();
+
+                let tr = $("<tr>", {"data-id": testId })
+                                  .append($("<td>",{ text: testName }))
+                                  .append($("<td>", { text: v2.min }))
+                                  .append($("<td>", { text: v2.avg }))
+                                  .append($("<td>", { text: v2.p90 }))
+                                  .append($("<td>",{ text: v2.max }))
+
+                $(`tbody[data-id=${chartId}]`).append(tr);
           })
        })
+    }
+
+    function createTable(chartId){
+        let table = $("<table>", {class: "table table-sm table-light", id: "table_" + chartId })
+        .append($("<thead>").append($("<tr>")
+        .append($("<td>", {text: "name" }))
+        .append($("<td>", {text: "min" }))
+        .append($("<td>", {text: "avg" }))
+        .append($("<td>", {text: "p90" }))
+        .append($("<td>", {text: "max" }))
+        )).append($("<tbody>", {'data-id' : chartId }));
+        return table;
     }
 
     function createChart(ctx, item){

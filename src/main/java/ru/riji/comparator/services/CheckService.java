@@ -1,6 +1,7 @@
 package ru.riji.comparator.services;
 
 import org.springframework.stereotype.Service;
+import ru.riji.comparator.helpers.StatUtil;
 import ru.riji.comparator.models.ChartStdDev;
 import ru.riji.comparator.models.Point;
 import ru.riji.comparator.models.PointLdt;
@@ -32,7 +33,7 @@ public class CheckService {
 
         List<Point> convertTest = new ArrayList<>();
         for(Map.Entry<Integer, List<PointLdt>> pointLdt : test4.entrySet()){
-            convertTest.add(new Point(pointLdt.getKey(), calculatePercentile(pointLdt.getValue().stream().map(PointLdt::getY).collect(Collectors.toList()), 90.0)));
+            convertTest.add(new Point(pointLdt.getKey(), StatUtil.calculatePercentile(pointLdt.getValue().stream().map(PointLdt::getY).collect(Collectors.toList()), 90.0)));
         }
 
 
@@ -45,7 +46,7 @@ public class CheckService {
 
         Map<Integer, List<PointLdt>> map = points.stream().collect(Collectors.groupingBy(x->x.getX().getMinute()));
         List<Point> avgMap = map.entrySet().stream().map(x->new Point(x.getKey(), x.getValue().stream().mapToDouble(PointLdt::getY).average().orElse(0.0))).collect(Collectors.toList()); //, y->y.getValue().stream().mapToDouble(PointLdt::getY).average().orElse(0.0)));
-        List<Point> p90Map = map.entrySet().stream().map(x->new Point(x.getKey(), calculatePercentile(x.getValue().stream().map(PointLdt::getY).collect(Collectors.toList()), 90.0))).collect(Collectors.toList());
+        List<Point> p90Map = map.entrySet().stream().map(x->new Point(x.getKey(), StatUtil.calculatePercentile(x.getValue().stream().map(PointLdt::getY).collect(Collectors.toList()), 90.0))).collect(Collectors.toList());
 
         List<Point> stdDev = new ArrayList<>();
         List<Point> stdDevPlus2 = new ArrayList<>();
@@ -72,30 +73,11 @@ public class CheckService {
     }
 
 
-   public static double stdDev(double avg,double value){
+   public static double  stdDev(double avg,double value){
         return Math.sqrt(Math.pow(avg-value, 2));
    }
 
-    public static double calculatePercentile(List<Double> data, double percentile) {
-        if (data == null || data.isEmpty()) {
-            return Double.NaN; // Not a Number for empty or null data
-        }
 
-        // Sort the data
-        Collections.sort(data);
-
-        // Calculate the index for the desired percentile
-        int index = (int) Math.ceil((percentile / 100.0) * data.size()) - 1;
-
-        // Ensure index is within bounds
-        if (index < 0) {
-            index = 0;
-        } else if (index >= data.size()) {
-            index = data.size() - 1;
-        }
-
-        return data.get(index);
-    }
 
     public static List<PointLdt> generatePoints(LocalDateTime start, LocalDateTime end, double bound){
         List<PointLdt> points = new ArrayList<>();
