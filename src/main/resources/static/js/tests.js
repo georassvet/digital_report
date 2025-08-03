@@ -90,7 +90,6 @@ function deleteDataset(testId) {
 }
 
    $(document).on("click",".item",function(e) {
-    e.preventDefault();
     var testId = $(this).data("id");
     if (testSet.has(testId)){
         testSet.delete(testId);
@@ -107,6 +106,7 @@ function deleteDataset(testId) {
                      });
              })
         }
+        $(".split-block").remove();
     })
 
     $(document).on("click",".split-btn",function(e) {
@@ -118,7 +118,7 @@ function deleteDataset(testId) {
             if (splitBlock.length > 0) {
                 splitBlock.empty();
             } else {
-                splitBlock = $("<div>", {class : "split-block"});
+                splitBlock = $("<div>", {class : "split-block", "data-id": chartId});
             }
 
             chartItem.data.datasets.forEach((dataset, index) => {
