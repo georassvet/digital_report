@@ -43,101 +43,91 @@ public class GrafanaService {
     @Autowired
     private TestDao testDao;
 
-    @Getter
-    public Map<Integer, Connect> connects = new HashMap<>();
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void init(){
-        List<Connect> connectList = connectDao.getAll();
-        for(Connect connect : connectList){
-            connects.put(connect.getId(), connect);
-        }
-    }
+//    public static List<String>  getDashboards(String host, String token){
+//        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/search?type=dash-db"};
+//        List<String> list = new ArrayList<>();
+//
+//            String result = ProcessRunner.run(command);
+//            JsonArray array = JsonParser.parseString(result).getAsJsonArray();
+//
+//            for (int i = 0; i < array.size(); i++) {
+//                JsonObject object = array.get(i).getAsJsonObject();
+//                String type = object.getAsJsonPrimitive("type").getAsString();
+//                String url = object.getAsJsonPrimitive("url").getAsString();
+//                String uid = object.getAsJsonPrimitive("uid").getAsString();
+//                String title = object.getAsJsonPrimitive("title").getAsString();
+//              //  System.out.println(type);
+//                list.add(uid);
+//            }
+//
+//
+//
+//        return list;
+//    }
 
-    public static List<String>  getDashboards(String host, String token){
-        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/search?type=dash-db"};
-        List<String> list = new ArrayList<>();
+//    public static String getDashboard(String host, String token, String uid){
+//        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
+//        String result = "";
+//
+//            result = ProcessRunner.run(command);
+//
+//        return result;
+//    }
 
-            String result = ProcessRunner.run(command);
-            JsonArray array = JsonParser.parseString(result).getAsJsonArray();
+//    public static String getPanels(String host, String token, String uid){
+//        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
+//        String result = "";
+//            result = ProcessRunner.run(command);
+//            JsonArray array = JsonParser.parseString(result).getAsJsonObject().getAsJsonObject("dashboard")
+//                    .getAsJsonArray("panels");
+//
+//
+//        return result;
+//    }
 
-            for (int i = 0; i < array.size(); i++) {
-                JsonObject object = array.get(i).getAsJsonObject();
-                String type = object.getAsJsonPrimitive("type").getAsString();
-                String url = object.getAsJsonPrimitive("url").getAsString();
-                String uid = object.getAsJsonPrimitive("uid").getAsString();
-                String title = object.getAsJsonPrimitive("title").getAsString();
-              //  System.out.println(type);
-                list.add(uid);
-            }
-
-
-
-        return list;
-    }
-
-    public static String getDashboard(String host, String token, String uid){
-        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
-        String result = "";
-
-            result = ProcessRunner.run(command);
-
-        return result;
-    }
-
-    public static String getPanels(String host, String token, String uid){
-        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
-        String result = "";
-            result = ProcessRunner.run(command);
-            JsonArray array = JsonParser.parseString(result).getAsJsonObject().getAsJsonObject("dashboard")
-                    .getAsJsonArray("panels");
-
-
-        return result;
-    }
-
-    public static String getDatasource(String host, String token, String uid){
-        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
-        String result = "";
-
-            result = ProcessRunner.run(command);
-            JsonObject obj = JsonParser.parseString(result).getAsJsonObject();
-            JsonArray array = obj.getAsJsonObject("dashboard")
-                    .getAsJsonArray("panels");
-
-            for (int i = 0; i < array.size() ; i++) {
-                JsonObject panelObject = array.get(i).getAsJsonObject();
-                int panelId = panelObject.getAsJsonPrimitive("id").getAsInt();
-                String panelType = panelObject.getAsJsonPrimitive("type").getAsString();
-                switch (panelType){
-                    case "row": {
-
-                        break;
-                    }
-                    case "timeseries": {
-                        String maxPerRow  = panelObject.getAsJsonPrimitive("maxPerRow").getAsString();
-                        break;
-                    }
-                }
-                String repeatParam = panelObject.has("repeat") ? panelObject.getAsJsonPrimitive("repeat").getAsString() : null;
-                String repeatDirection = panelObject.has("repeatDirection") ? panelObject.getAsJsonPrimitive("repeatDirection").getAsString() : null;
-
-                if (repeatParam != null){
-
-                }
-              //  String panelTitle = panelObject.getAsJsonPrimitive("title").getAsString();
-                System.out.println(panelType + " " + " " + panelId);
-//                JsonObject info = panelObject.getAsJsonObject("datasource");
-//                String type = info.getAsJsonPrimitive("type").getAsString();
-//                String panelUid = info.getAsJsonPrimitive("uid").getAsString();
-
-            }
-
-        return result;
-    }
+//    public static String getDatasource(String host, String token, String uid){
+//        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
+//        String result = "";
+//
+//            result = ProcessRunner.run(command);
+//            JsonObject obj = JsonParser.parseString(result).getAsJsonObject();
+//            JsonArray array = obj.getAsJsonObject("dashboard")
+//                    .getAsJsonArray("panels");
+//
+//            for (int i = 0; i < array.size() ; i++) {
+//                JsonObject panelObject = array.get(i).getAsJsonObject();
+//                int panelId = panelObject.getAsJsonPrimitive("id").getAsInt();
+//                String panelType = panelObject.getAsJsonPrimitive("type").getAsString();
+//                switch (panelType){
+//                    case "row": {
+//
+//                        break;
+//                    }
+//                    case "timeseries": {
+//                        String maxPerRow  = panelObject.getAsJsonPrimitive("maxPerRow").getAsString();
+//                        break;
+//                    }
+//                }
+//                String repeatParam = panelObject.has("repeat") ? panelObject.getAsJsonPrimitive("repeat").getAsString() : null;
+//                String repeatDirection = panelObject.has("repeatDirection") ? panelObject.getAsJsonPrimitive("repeatDirection").getAsString() : null;
+//
+//                if (repeatParam != null){
+//
+//                }
+//              //  String panelTitle = panelObject.getAsJsonPrimitive("title").getAsString();
+//                System.out.println(panelType + " " + " " + panelId);
+////                JsonObject info = panelObject.getAsJsonObject("datasource");
+////                String type = info.getAsJsonPrimitive("type").getAsString();
+////                String panelUid = info.getAsJsonPrimitive("uid").getAsString();
+//
+//            }
+//
+//        return result;
+//    }
 
     public List<QueryData> getQueryData(int testId, String start, String end, ChartQuery query){
-        Connect connect =  connects.get(query.getConnectId());
+        Connect connect =  connectDao.getById(query.getConnectId());
         Test test = testDao.getById(testId);
         LocalDateTime testStartLdt = LocalDateTime.parse(test.getStart());
         long testStart = TimeUtil.convertToUtcMillis(testStartLdt);
@@ -201,87 +191,87 @@ public class GrafanaService {
         return list;
     }
 
-   private List<TestData> parsePrometheus(int testId, int chartId, int queryId, String name, String data){
-       List<TestData> result = new ArrayList<>();
+//   private List<TestData> parsePrometheus(int testId, int chartId, int queryId, String name, String data){
+//       List<TestData> result = new ArrayList<>();
+//
+//       JsonObject object = JsonParser.parseString(data).getAsJsonObject();
+//       JsonArray array = object.getAsJsonObject("data").getAsJsonArray("result");
+//       for(int i=0; i < array.size(); i++){
+//           JsonObject item = array.get(i).getAsJsonObject();
+//           JsonObject metric = item.getAsJsonObject("metric");
+//           Map<String, String> labels =  new HashMap<>();
+//           metric.entrySet().forEach(x->labels.put(x.getKey(), x.getValue().getAsString()));
+//           String metricName = item.getAsJsonObject("metric").getAsJsonPrimitive("uri").getAsString();
+//          String label = item.getAsJsonObject("metric").getAsJsonPrimitive("uri").getAsString();
+//           JsonArray values = item.getAsJsonArray("values");
+//           for(int j=0; j < values.size(); j++){
+//               JsonArray point = values.get(j).getAsJsonArray();
+//               long timestamp = point.get(0).getAsLong();
+//               double value = point.get(1).getAsDouble();
+//               result.add(new TestData(testId,chartId,queryId, metricName, timestamp, value));
+//           }
+//       }
+//       return result;
+//   }
 
-       JsonObject object = JsonParser.parseString(data).getAsJsonObject();
-       JsonArray array = object.getAsJsonObject("data").getAsJsonArray("result");
-       for(int i=0; i < array.size(); i++){
-           JsonObject item = array.get(i).getAsJsonObject();
-           JsonObject metric = item.getAsJsonObject("metric");
-           Map<String, String> labels =  new HashMap<>();
-           metric.entrySet().forEach(x->labels.put(x.getKey(), x.getValue().getAsString()));
-           String metricName = item.getAsJsonObject("metric").getAsJsonPrimitive("uri").getAsString();
-          String label = item.getAsJsonObject("metric").getAsJsonPrimitive("uri").getAsString();
-           JsonArray values = item.getAsJsonArray("values");
-           for(int j=0; j < values.size(); j++){
-               JsonArray point = values.get(j).getAsJsonArray();
-               long timestamp = point.get(0).getAsLong();
-               double value = point.get(1).getAsDouble();
-               result.add(new TestData(testId,chartId,queryId, metricName, timestamp, value));
-           }
-       }
-       return result;
-   }
+//    private List<TestData> parsePrometheus(int testId, ChartQuery query, String data){
+//        List<TestData> result = new ArrayList<>();
+//
+//
+//        JsonObject object = JsonParser.parseString(data).getAsJsonObject();
+//        JsonArray array = object.getAsJsonObject("data").getAsJsonArray("result");
+//        for(int i=0; i < array.size(); i++){
+//            JsonObject item = array.get(i).getAsJsonObject();
+//            String metricName = item.getAsJsonObject("metric").getAsJsonPrimitive("uri").getAsString();
+//            //   String label = item.getAsJsonObject("metric").getAsJsonPrimitive("uri").getAsString();
+//            JsonArray values = item.getAsJsonArray("values");
+//            for(int j=0; j < values.size(); j++){
+//                JsonArray point = values.get(j).getAsJsonArray();
+//                long timestamp = point.get(0).getAsLong();
+//                double value = point.get(1).getAsDouble();
+//                result.add(new TestData(testId,1,1, metricName, timestamp, value));
+//            }
+//        }
+//        return result;
+//    }
 
-    private List<TestData> parsePrometheus(int testId, ChartQuery query, String data){
-        List<TestData> result = new ArrayList<>();
-
-
-        JsonObject object = JsonParser.parseString(data).getAsJsonObject();
-        JsonArray array = object.getAsJsonObject("data").getAsJsonArray("result");
-        for(int i=0; i < array.size(); i++){
-            JsonObject item = array.get(i).getAsJsonObject();
-            String metricName = item.getAsJsonObject("metric").getAsJsonPrimitive("uri").getAsString();
-            //   String label = item.getAsJsonObject("metric").getAsJsonPrimitive("uri").getAsString();
-            JsonArray values = item.getAsJsonArray("values");
-            for(int j=0; j < values.size(); j++){
-                JsonArray point = values.get(j).getAsJsonArray();
-                long timestamp = point.get(0).getAsLong();
-                double value = point.get(1).getAsDouble();
-                result.add(new TestData(testId,1,1, metricName, timestamp, value));
-            }
-        }
-        return result;
-    }
-
-    private List<TestData> parseData(int testId, int chartId, int queryId, String name, String result) {
-        JsonObject object = JsonParser.parseString(result).getAsJsonObject();
-        JsonObject data = object.getAsJsonObject("results");
-        Set<Map.Entry<String, JsonElement>> items = data.entrySet();
-        List<TestData> testDataArrayList = new ArrayList<>();
-        for(Map.Entry<String, JsonElement> item : items){
-            JsonArray framesArray = item.getValue().getAsJsonObject().getAsJsonArray("frames");
-            for(int i=0; i<framesArray.size(); i++){
-                JsonElement frame = framesArray.get(i);
-                JsonArray valuesArray = frame.getAsJsonObject()
-                        .getAsJsonObject("data")
-                        .getAsJsonArray("values");
-                if(valuesArray.size() > 0){
-                    JsonArray labels = valuesArray.get(0).getAsJsonArray();
-                    JsonArray values = valuesArray.get(1).getAsJsonArray();
-
-                    JsonArray fieldsArray = frame.getAsJsonObject()
-                            .getAsJsonObject("schema").getAsJsonArray("fields");
-                    JsonObject fieldNames = fieldsArray.get(1).getAsJsonObject().getAsJsonObject("labels");
-                    Map<String, String> fields = fieldNames.entrySet().stream().collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            e->e.getValue().toString().replaceAll("\"","")
-                    ));
-                    String replacedName = StringSubstitutor.replace(name, fields);
-
-                    for (int j = 0; j < labels.size(); j++) {
-                        long label = labels.get(j).getAsLong();
-                        double value = values.get(j).getAsDouble();
-                        TestData testData = new TestData(testId, chartId, queryId, replacedName, label, value);
-                        testDataArrayList.add(testData);
-                    }
-                }
-            }
-        }
-        return testDataArrayList;
-
-    }
+//    private List<TestData> parseData(int testId, int chartId, int queryId, String name, String result) {
+//        JsonObject object = JsonParser.parseString(result).getAsJsonObject();
+//        JsonObject data = object.getAsJsonObject("results");
+//        Set<Map.Entry<String, JsonElement>> items = data.entrySet();
+//        List<TestData> testDataArrayList = new ArrayList<>();
+//        for(Map.Entry<String, JsonElement> item : items){
+//            JsonArray framesArray = item.getValue().getAsJsonObject().getAsJsonArray("frames");
+//            for(int i=0; i<framesArray.size(); i++){
+//                JsonElement frame = framesArray.get(i);
+//                JsonArray valuesArray = frame.getAsJsonObject()
+//                        .getAsJsonObject("data")
+//                        .getAsJsonArray("values");
+//                if(valuesArray.size() > 0){
+//                    JsonArray labels = valuesArray.get(0).getAsJsonArray();
+//                    JsonArray values = valuesArray.get(1).getAsJsonArray();
+//
+//                    JsonArray fieldsArray = frame.getAsJsonObject()
+//                            .getAsJsonObject("schema").getAsJsonArray("fields");
+//                    JsonObject fieldNames = fieldsArray.get(1).getAsJsonObject().getAsJsonObject("labels");
+//                    Map<String, String> fields = fieldNames.entrySet().stream().collect(Collectors.toMap(
+//                            Map.Entry::getKey,
+//                            e->e.getValue().toString().replaceAll("\"","")
+//                    ));
+//                    String replacedName = StringSubstitutor.replace(name, fields);
+//
+//                    for (int j = 0; j < labels.size(); j++) {
+//                        long label = labels.get(j).getAsLong();
+//                        double value = values.get(j).getAsDouble();
+//                        TestData testData = new TestData(testId, chartId, queryId, replacedName, label, value);
+//                        testDataArrayList.add(testData);
+//                    }
+//                }
+//            }
+//        }
+//        return testDataArrayList;
+//
+//    }
 
 
 

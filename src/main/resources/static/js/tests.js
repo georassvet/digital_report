@@ -72,7 +72,6 @@ function createTest(item){
 }
 
 function deleteDataset(testId) {
-
     allCharts.forEach(chart => {
        let data = chart.data;
         data.datasets.find((dataset, index) => {
@@ -110,6 +109,31 @@ function deleteDataset(testId) {
         }
     })
 
+    $(document).on("click",".split-btn",function(e) {
+            e.preventDefault();
+            var chartId = $(this).data("id");
+            let chartItem = Chart.getChart(chartId);
+            let canvasWrapper = chartItem.canvas;
+            let splitBlock = $(`.split-block[data-id="${chartId}"]`);
+            if (splitBlock.length > 0) {
+                splitBlock.empty();
+            } else {
+                splitBlock = $("<div>", {class : "split-block"});
+            }
+
+            chartItem.data.datasets.forEach((dataset, index) => {
+                  let subChartId = "sub_" + chartId + "_" + index;
+                  let subCanvasWrapper = $("<div>", {class : "sub-canvas-wrapper", "data-id": subChartId});
+                  let subCanvas = $("<canvas>", {"id": subChartId, "class": "sub-canvas"});
+                  let subChartItem = createChart(subCanvas, "", "", 'bottom');
+                  subCanvasWrapper.append(subCanvas);
+                  splitBlock.append(subCanvasWrapper);
+                  subChartItem.data.datasets.push(dataset);
+                  subChartItem.update();
+            })
+            $(canvasWrapper).after(splitBlock);
+        })
+
     function createCharts(data, chart, testId, testName, size){
            let panelGroup = $(`.panel-group[data-id=${chart.id}]`);
 
@@ -120,12 +144,15 @@ function deleteDataset(testId) {
 
                 if(chartItem == null){
                     let canvasWrapper = $("<div>", { class: "canvas-wrapper",  "data-id": chartId });
+                    let canvasHeader = $("<div>", { class: "d-flex justify-content-between"});
                     let canvasName = $("<div>", { class: "canvas-name", text:`${v2.queryName}`});
+                    let splitBtn = $("<button>", { class: "btn btn-sm btn-light border split-btn", text:"Split", "data-id": chartId});
+                    canvasHeader.append(canvasName).append(splitBtn);
                     let chartTable = createTable(chartId);
                     let canvas = $("<canvas>", { id: chartId });
-                    chartItem = createChart(canvas, chart);
+                    chartItem = createChart(canvas, chart.scaleX, chart.scaleY, 'right');
                     allCharts.push(chartItem);
-                    canvasWrapper.append(canvasName).append(canvas).append(chartTable);
+                    canvasWrapper.append(canvasHeader).append(canvas).append(chartTable);
                     panelGroup.append(canvasWrapper);
 
                 }
@@ -171,7 +198,7 @@ function deleteDataset(testId) {
         return table;
     }
 
-    function createChart(ctx, item){
+    function createChart(ctx, scaleX ,scaleY, position){
     var datasets = [];
     var chart =  new Chart(ctx, {
      type: 'line',
@@ -208,14 +235,14 @@ function deleteDataset(testId) {
              },
               title: {
                 display: true,
-                text: item.scaleX
+                text: scaleX
               }
             },
         y: {
           type: 'linear',
           title: {
                   display: true,
-                  text: item.scaleY
+                  text: scaleY
                  }
         }
       },
@@ -231,7 +258,7 @@ function deleteDataset(testId) {
                   },
       plugins: {
         legend: {
-            position: 'bottom',
+            position: position,
             font: {
                 size: 6
             },
