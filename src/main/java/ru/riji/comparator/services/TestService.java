@@ -9,6 +9,7 @@ import ru.riji.comparator.dao.*;
 import ru.riji.comparator.dto.ProjectDto;
 import ru.riji.comparator.dto.TestDataDto;
 import ru.riji.comparator.dto.TestDto;
+import ru.riji.comparator.form.ChartQueryForm;
 import ru.riji.comparator.form.TestForm;
 import ru.riji.comparator.helpers.TimeUtil;
 import ru.riji.comparator.models.*;
@@ -22,7 +23,6 @@ import static ru.riji.comparator.helpers.TimeUtil.convertToUtcMillis;
 
 @Service
 public class TestService implements ITestService{
-
 
     @Autowired
     private TestDao testDao;
@@ -48,6 +48,11 @@ public class TestService implements ITestService{
         testDao.add(form);
     }
 
+    @Override
+    public Map<Integer, List<QueryData>> getData(int testId) {
+        return null;
+    }
+
     public TestDataDto getData(int testId, int chartId) {
         Map<Integer, List<QueryData>> data = new HashMap<>();
         Test test = testDao.getById(testId);
@@ -60,6 +65,10 @@ public class TestService implements ITestService{
         }
       return new TestDataDto(test.getId(), test.getRelease(), data);
     }
+    public String getTestData(ChartQueryForm form) {
+        return grafanaService.getTestData(form.getConnectId(), form.getQuery());
+    }
+
 
     public Map<Integer, List<QueryData>> getData2(int testId, int panelId) {
             Test test = testDao.getById(testId);
@@ -89,34 +98,6 @@ public class TestService implements ITestService{
                 result.put(groupByQueryId.getKey(), list);
         }
         return result;
-    }
-
-
-    @Override
-    public Map<Integer, List<QueryData>> getData(int testId) {
-//        List<TestData> testData = testDataDao.getAllByTestId(testId);
-//
-//        Map<Integer, List<QueryData>> result = new HashMap<>();
-//        Map<Integer, List<TestData>> groupsByChartId = testData.stream().collect(Collectors.groupingBy(TestData::getChartId));
-//        for(Map.Entry<Integer, List<TestData>> groupByChartId : groupsByChartId.entrySet()) {
-//            Map<Integer, List<TestData>> groupsByQueryId = groupByChartId.getValue().stream().collect(Collectors.groupingBy(x -> x.getQueryId()));
-//
-//            for (Map.Entry<Integer, List<TestData>> groupByQueryId : groupsByQueryId.entrySet()) {
-//                Map<String, List<TestData>> groupsByName =  groupByQueryId.getValue().stream().collect(Collectors.groupingBy(x->x.getName()));
-//                List<QueryData> list = new ArrayList<>();
-//                for (Map.Entry<String, List<TestData>> groupByName : groupsByName.entrySet()) {
-//                    QueryData queryData = new QueryData();
-//                    queryData.setTestId(testId);
-//                    queryData.setChartId(groupByChartId.getKey());
-//                    queryData.setQueryId(groupByQueryId.getKey());
-//                    queryData.setQueryName(groupByName.getKey());
-//                    queryData.setPoints(groupByName.getValue().stream().map(x->new Point(x.getLabel(),x.getValue())).collect(Collectors.toList()));
-//                    list.add(queryData);
-//                }
-//                result.put(groupByChartId.getKey(), list);
-//            }
-//        }
-        return null;
     }
 
     @Override

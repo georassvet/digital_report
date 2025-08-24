@@ -15,6 +15,10 @@ public class TimeUtil {
         ZonedDateTime ldtZoned = ldt.atZone(ZoneId.systemDefault());
         return ldtZoned.withZoneSameInstant(ZoneId.of("UTC")).format(formatter);
     }
+    public static String convertToUtc(LocalDateTime ldt) {
+        ZonedDateTime ldtZoned = ldt.atZone(ZoneId.systemDefault());
+        return ldtZoned.withZoneSameInstant(ZoneId.of("UTC")).format(formatter);
+    }
 
     public static long convertToUtcMillis(LocalDateTime dateTime) {
         ZonedDateTime dateTimeInMyZone = ZonedDateTime.

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.riji.comparator.dto.ChartDto;
 import ru.riji.comparator.dto.TestDto;
+import ru.riji.comparator.form.ChartQueryForm;
 import ru.riji.comparator.models.*;
 import ru.riji.comparator.services.ChartService;
 import ru.riji.comparator.services.CheckService;
@@ -47,6 +48,11 @@ public class DataController {
     public ResponseEntity<?> updateChartOrder(Model model, @RequestBody ChartOrder[] arr){
         chartService.updateChartOrder(arr);
         return new ResponseEntity<>( HttpStatus.OK);
+    }
+
+    @PostMapping(value = {"/api/query/test"})
+    public ResponseEntity<?> apiQueryTest(Model model, ChartQueryForm form){
+        return new ResponseEntity<>(testService.getTestData(form), HttpStatus.OK);
     }
 
 }

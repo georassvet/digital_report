@@ -1,7 +1,8 @@
-
+let totalTables = new Map();
 let projectId;
 let charts;
 let testSet = new Set();
+let allTests = new Map();
 let allCharts = [];
 
 let borderColors = ['rgba(245, 39, 39, 0.9)','rgba(31, 227, 99, 0.9)', 'rgba(31, 89, 227, 0.9)', 'rgba(152, 31, 227, 0.9)'];
@@ -10,8 +11,6 @@ let backgroundColors = ['rgba(245, 39, 39, 0.7)','rgba(31, 227, 99, 0.7)','rgba(
 $(function(){
     projectId = $("#projectId").data("id");
     getTests();
-    getCharts();
-
 })
 
 function getCharts(){
@@ -37,13 +36,13 @@ function getCharts(){
 
             });
             let accordionBody = $("<div>", { class: "accordion-body panel-group", 'data-id':item.id });
-            let totalTableElement = $("<table>", { 'data-id': item.id });
-            tables.set(item.id, new TotalTable());
+            let totalTableElement = $("<div>", { class: "total-table", 'data-id': item.id });
             accordionHeader.append(accordionBtn);
             accordionBody.append(totalTableElement);
             accordionCollapse.append(accordionBody);
             accordionItem.append(accordionHeader).append(accordionCollapse);
             dashboard.append(accordionItem);
+            totalTables.set(item.id, new TotalTable((keyObject) => JSON.stringify(keyObject)))
         })
         updateCompare();
     })
@@ -66,11 +65,13 @@ function getTests(){
     let tests = $("#items");
     $.get(`/api/projects/${projectId}/tests`, function(items) {
            tests.empty();
-
            $.each(items, function(i, item) {
+            allTests.set(item.id, item);
             let test = createTest(item);
             tests.append(test);
            })
+           getCharts();
+
     })
 }
 
@@ -104,15 +105,17 @@ function deleteDataset(testId) {
     });
 
     $(`tr[data-id="${testId}"]`).remove();
+    testSet.delete(testId);
 }
+
 
    $(document).on("click",".item",function(e) {
     var testId = $(this).data("id");
     var testName = $(this).data("name");
     if (testSet.has(testId)){
-        testSet.delete(testId);
-        $(this).removeClass("active");
         deleteDataset(testId);
+        $(this).removeClass("active");
+
     } else {
         $(this).addClass("active");
          addTest(testId);
@@ -126,7 +129,11 @@ function deleteDataset(testId) {
         var size = testSet.size-1;
         $.each(charts, function(i, chart) {
             $.get('/api/data', { 'testId': testId, 'panelId': chart.id }, function(data){
-                createCharts(data, chart, size);
+                let totalTable = createCharts(data, chart, size);
+                let htmlTable = totalTable.getTable();
+                let totalTableDiv = $(`.total-table[data-id=${chart.id}]`);
+                totalTableDiv.empty();
+                totalTableDiv.append(htmlTable);
             });
         })
     }
@@ -163,25 +170,26 @@ function deleteDataset(testId) {
 
     function createCharts(data, chart, size){
            let panelGroup = $(`.panel-group[data-id=${chart.id}]`);
-           let totalTable  = tables.get(chart.id);
+           let totalTable  = totalTables.get(chart.id);
             $.each(data.metric, function(k1, v1) {
                 $.each(v1, function(k2, v2) {
-                let chartId = `${chart.id}_${v2.queryId}_${k2}`;
-                let chartItem = Chart.getChart(chartId);
+                let panelId = `${chart.id}_${v2.queryId}_${v2.queryName}`;
+                let chartItem = Chart.getChart(panelId);
 
                 if(chartItem == null){
-                    let canvasWrapper = $("<div>", { class: "canvas-wrapper",  "data-id": chartId });
+                    let canvasWrapper = $("<div>", { class: "canvas-wrapper",  "data-id": panelId, "data-name": v2.queryName });
+                    canvasWrapper.css('display','none');
+
                     let canvasHeader = $("<div>", { class: "d-flex justify-content-between"});
                     let canvasName = $("<div>", { class: "canvas-name", text:`${v2.queryName}`});
-                    let splitBtn = $("<button>", { class: "btn btn-sm btn-light border split-btn", text:"Split", "data-id": chartId});
+                    let splitBtn = $("<button>", { class: "btn btn-sm btn-light border split-btn", text:"Split", "data-id": panelId});
                     canvasHeader.append(canvasName).append(splitBtn);
-                    let chartTable = createTable(chartId);
-                    let canvas = $("<canvas>", { id: chartId });
+                    let chartTable = createTable(panelId);
+                    let canvas = $("<canvas>", { id: panelId });
                     chartItem = createChart(canvas, chart.scaleX, chart.scaleY, 'right');
                     allCharts.push(chartItem);
                     canvasWrapper.append(canvasHeader).append(canvas).append(chartTable);
                     panelGroup.append(canvasWrapper);
-
                 }
 
                 let points =  v2.points.map(({x,y}) => ({"x": x - v2.testStart, "y":y}));
@@ -202,7 +210,8 @@ function deleteDataset(testId) {
                 chartItem.update();
 
 
-                totalTable.add(v2.queryName, v2.p90, data.testId)
+               // totalTable.set(chartId, v2.p90, data.testId)
+                totalTable.addData(panelId, v2.queryName, data.testId, v2.p90)
 
                 let tr = $("<tr>", {"data-id": data.testId })
                                   .append($("<td>",{ text: data.testName }))
@@ -211,10 +220,15 @@ function deleteDataset(testId) {
                                   .append($("<td>", { text: v2.p90 }))
                                   .append($("<td>",{ text: v2.max }))
 
-                $(`tbody[data-id=${chartId}]`).append(tr);
+                $(`tbody[data-id='${panelId}']`).append(tr);
           })
-
        })
+
+         let htmlTable = totalTable.getTable();
+         let totalTableDiv = $(`.total-table[data-id='${chart.id}']`);
+         totalTableDiv.empty();
+         totalTableDiv.append(htmlTable);
+        return totalTable;
     }
 
     function createTable(chartId){

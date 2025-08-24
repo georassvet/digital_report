@@ -6,7 +6,7 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <form method="post" th:action="@{'/projects/' + ${projectId} + '/charts/'  + ${form.chartId} + '/queries/add'}" th:object="${form}">
+    <form id ="query-form" method="post" th:action="@{'/projects/' + ${projectId} + '/charts/'  + ${form.chartId} + '/queries/add'}" th:object="${form}">
         <input type="hidden" class="form-control" th:field="*{id}">
         <div class="row">
                     <div class="col-md-4">
@@ -41,6 +41,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <input class="btn btn-sm btn-light border" type="submit" value="Save">
+                        <button id="testBtn" class="btn btn-sm btn-light border" >Test</button>
                     </div>
                 </div>
                 </div>
@@ -69,7 +70,9 @@
             </tr>
             </tbody>
         </table>
+        <div id="output"></div>
     </div>
+    <div th:replace = "~{fragments/scripts.html :: add_chart_query}"></div>
 </div>
 </body>
 </html>

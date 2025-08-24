@@ -43,89 +43,22 @@ public class GrafanaService {
     @Autowired
     private TestDao testDao;
 
+    public String getTestData(int connectId, String query ){
+        Connect connect =  connectDao.getById(connectId);
+        LocalDateTime ldtEnd = LocalDateTime.now();
+        LocalDateTime ldtStart = ldtEnd.minusMinutes(1005);
+        String start = TimeUtil.convertToUtc(ldtStart);
+        String end = TimeUtil.convertToUtc(ldtEnd);
 
-//    public static List<String>  getDashboards(String host, String token){
-//        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/search?type=dash-db"};
-//        List<String> list = new ArrayList<>();
-//
-//            String result = ProcessRunner.run(command);
-//            JsonArray array = JsonParser.parseString(result).getAsJsonArray();
-//
-//            for (int i = 0; i < array.size(); i++) {
-//                JsonObject object = array.get(i).getAsJsonObject();
-//                String type = object.getAsJsonPrimitive("type").getAsString();
-//                String url = object.getAsJsonPrimitive("url").getAsString();
-//                String uid = object.getAsJsonPrimitive("uid").getAsString();
-//                String title = object.getAsJsonPrimitive("title").getAsString();
-//              //  System.out.println(type);
-//                list.add(uid);
-//            }
-//
-//
-//
-//        return list;
-//    }
-
-//    public static String getDashboard(String host, String token, String uid){
-//        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
-//        String result = "";
-//
-//            result = ProcessRunner.run(command);
-//
-//        return result;
-//    }
-
-//    public static String getPanels(String host, String token, String uid){
-//        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
-//        String result = "";
-//            result = ProcessRunner.run(command);
-//            JsonArray array = JsonParser.parseString(result).getAsJsonObject().getAsJsonObject("dashboard")
-//                    .getAsJsonArray("panels");
-//
-//
-//        return result;
-//    }
-
-//    public static String getDatasource(String host, String token, String uid){
-//        String[] command = {"curl","-H","Authorization: Bearer " + token, host + "/api/dashboards/uid/"+uid};
-//        String result = "";
-//
-//            result = ProcessRunner.run(command);
-//            JsonObject obj = JsonParser.parseString(result).getAsJsonObject();
-//            JsonArray array = obj.getAsJsonObject("dashboard")
-//                    .getAsJsonArray("panels");
-//
-//            for (int i = 0; i < array.size() ; i++) {
-//                JsonObject panelObject = array.get(i).getAsJsonObject();
-//                int panelId = panelObject.getAsJsonPrimitive("id").getAsInt();
-//                String panelType = panelObject.getAsJsonPrimitive("type").getAsString();
-//                switch (panelType){
-//                    case "row": {
-//
-//                        break;
-//                    }
-//                    case "timeseries": {
-//                        String maxPerRow  = panelObject.getAsJsonPrimitive("maxPerRow").getAsString();
-//                        break;
-//                    }
-//                }
-//                String repeatParam = panelObject.has("repeat") ? panelObject.getAsJsonPrimitive("repeat").getAsString() : null;
-//                String repeatDirection = panelObject.has("repeatDirection") ? panelObject.getAsJsonPrimitive("repeatDirection").getAsString() : null;
-//
-//                if (repeatParam != null){
-//
-//                }
-//              //  String panelTitle = panelObject.getAsJsonPrimitive("title").getAsString();
-//                System.out.println(panelType + " " + " " + panelId);
-////                JsonObject info = panelObject.getAsJsonObject("datasource");
-////                String type = info.getAsJsonPrimitive("type").getAsString();
-////                String panelUid = info.getAsJsonPrimitive("uid").getAsString();
-//
-//            }
-//
-//        return result;
-//    }
-
+        Map<String,String> params = new HashMap<>();
+        params.put("expr", query);
+        params.put("start", start);
+        params.put("end", end);
+        params.put("host", connect.getUrl());
+        params.put("step", getStep(ldtStart, ldtEnd));
+        String result = HttpRunner.run(params);
+        return result;
+    }
     public List<QueryData> getQueryData(Test test, ChartQuery query){
         Connect connect =  connectDao.getById(query.getConnectId());
         LocalDateTime testStartLdt = LocalDateTime.parse(test.getStart());
@@ -134,20 +67,14 @@ public class GrafanaService {
         long testStart = TimeUtil.convertToUtcMillis(testStartLdt);
         LocalDateTime ldtStart = LocalDateTime.parse(test.getStart());
         LocalDateTime ldtEnd = LocalDateTime.parse(test.getEnd());
-        long duration = Duration.between(ldtStart, ldtEnd).getSeconds();
 
         Map<String,String> params = new HashMap<>();
         params.put("expr", query.getQuery());
         params.put("start", start);
         params.put("end", end);
         params.put("host", connect.getUrl());
+        params.put("step", getStep(ldtStart, ldtEnd));
 
-       for(Map.Entry<Integer, String> entry : steps.entrySet()){
-           if(duration / entry.getKey() <= 11000){
-               params.put("step", entry.getValue());
-               break;
-           }
-       }
 
         String result = HttpRunner.run(params);
 
@@ -190,6 +117,16 @@ public class GrafanaService {
             }
         }
         return list;
+    }
+
+    private  String getStep(LocalDateTime ldtStart, LocalDateTime ldtEnd) {
+        long duration = Duration.between(ldtStart, ldtEnd).getSeconds();
+        for (Map.Entry<Integer, String> entry : steps.entrySet()) {
+            if (duration / entry.getKey() <= 11000) {
+                return entry.getValue();
+            }
+        }
+        return "5s";
     }
 }
 

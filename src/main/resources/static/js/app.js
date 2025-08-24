@@ -78,53 +78,6 @@ function updateView(tasks){
 }
 
 
-    $(document).on("click","#test",function(e) {
-    e.preventDefault();
-    var output = $('#output');
-    output.empty();
-    var form = new FormData($('#form')[0]);
-
-           $.ajax({
-                 type: 'post',
-                 url: '/test',
-                  data: form,
-                  processData: false,
-                  contentType: false,
-                  cache: false,
-                  success: function (data) {
-                    if(data.errorMessage !== null && data.errorMessage!==""){
-                        var textarea = $('<textarea>',{
-                                               class:'form-control',
-                                               type: 'text',
-                                               text: data.errorMessage
-                                         });
-                        output.append(textarea);
-                    }else{
-                        var table = $('<table>',{
-                                        class:'table table-sm table-light'
-                                     });
-                         var thead = $('<thead>');
-                         var tr = $('<tr>');
-                        $.each(data.columnNames, function( i, item){
-                            tr.append($("<th>").text(item));
-                        });
-                        thead.append(tr);
-                        table.append(thead);
-                        var tbody = $('<tbody>');
-                        $.each(data.rows, function( i, item){
-                        var tr = $('<tr>');
-                            $.each(item, function(j, elem){
-                                tr.append($('<td>').text(elem));
-                            });
-                            tbody.append(tr);
-                        });
-                        table.append(tbody);
-
-                     output.append(table);
-                 }
-           }
-       })
-  });
 
    $(document).on("click",".start",function(e) {
     e.preventDefault();
