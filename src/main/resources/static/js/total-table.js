@@ -44,14 +44,9 @@ class TotalTable {
             let name = allTests.get(testId).release;
             theadTr.append($("<th>", { text : name}));
         }
-
-
         thead.append(theadTr);
         let tbody =$("<tbody>");
         let map = this.map;
-        for (const [key, value] of map) {
-                console.log(`${key}: ${value}`);
-            }
          this.map.forEach((value, key) => {
           let tbodyTr = $("<tr>");
             tbodyTr
